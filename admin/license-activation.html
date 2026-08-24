@@ -65,7 +65,10 @@ window.activate = async function(){
     return;
   }
 
-  const { error } = await client.from("immonova_license").upsert({ id: 1, license_code: licenseCode });
+  // Niente "id: 1" fisso: ogni tenant ha la propria riga (tenant_id si
+  // riempie da solo lato database) — "upsert" aggiorna quella riga se
+  // esiste già, altrimenti la crea.
+  const { error } = await client.from("immonova_license").upsert({ license_code: licenseCode }, { onConflict: "tenant_id" });
   if(error){
     statusEl.textContent = "Errore salvataggio: " + error.message;
     statusEl.className = "status error";
