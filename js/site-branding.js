@@ -1,4 +1,4 @@
-/* IMMONOVA — Logo e contatti centralizzati (letti dal database, non più scritti nel
+/* DOMINUS — Logo e contatti centralizzati (letti dal database, non più scritti nel
    codice). Da includere in ogni pagina DOPO js/config.js:
      <script src="js/config.js"></script>
      <script src="js/site-branding.js"></script>
@@ -6,7 +6,7 @@
    per config.js — es. "../js/site-branding.js" dentro /admin).
 
    Cosa fa automaticamente, senza bisogno di scrivere altro codice nella pagina:
-   - Ogni elemento con class="logo" (il testo "IMMONOVA" usato come logo in tutte le
+   - Ogni elemento con class="logo" (il testo "DOMINUS" usato come logo in tutte le
      pagine) viene sostituito con l'immagine caricata dalla pagina admin, SE è stata
      caricata. Se non è stato caricato nessun logo, resta il testo originale invariato
      (nessuna rottura visiva).
@@ -50,7 +50,7 @@
       if(el.querySelector("img")) return;
       var img = document.createElement("img");
       img.src = settings.logo_url;
-      img.alt = settings.company_name || "IMMONOVA";
+      img.alt = settings.company_name || "DOMINUS";
       img.style.maxHeight = "38px";
       img.style.maxWidth = "220px";
       img.style.width = "auto";

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Impostazioni sito | IMMONOVA Admin</title>
+<title>Impostazioni sito | DOMINUS Admin</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -54,7 +54,7 @@ input,select{width:100%;padding:12px 14px;border:1px solid rgba(166,127,52,.25);
 <body>
 
 <header class="header">
-<div class="logo">IMMONOVA</div>
+<div class="logo">DOMINUS</div>
 <div class="header-actions">
 <a href="dashboard.html">Dashboard</a>
 <a href="broadcast-notifications.html">Notifiche broadcast</a>
@@ -76,10 +76,10 @@ Logo e contatti (email, indirizzi, telefoni) usati su tutte le pagine del sito. 
 <div class="section">
 <div class="section-title">Logo</div>
 <img id="logoPreview" class="logo-preview" style="display:none">
-<div id="logoPreviewEmpty" class="logo-preview-empty">Nessun logo caricato — le pagine mostrano il testo "IMMONOVA".</div>
+<div id="logoPreviewEmpty" class="logo-preview-empty">Nessun logo caricato — le pagine mostrano il testo "DOMINUS".</div>
 <div class="field">
 <label>Nome azienda (usato come testo alternativo dell'immagine)</label>
-<input type="text" id="companyName" placeholder="IMMONOVA">
+<input type="text" id="companyName" placeholder="DOMINUS">
 </div>
 <div class="field">
 <label>Carica nuovo logo (PNG o SVG con sfondo trasparente consigliato)</label>
@@ -391,7 +391,7 @@ document.getElementById("saveLogoBtn").addEventListener("click", async function(
       logoUrl = publicUrlResult.data.publicUrl;
     }
 
-    var updatePayload = { company_name: companyName || "IMMONOVA" };
+    var updatePayload = { company_name: companyName || "DOMINUS" };
     if(logoUrl) updatePayload.logo_url = logoUrl;
 
     var updateResult = await client.from("immonova_site_settings").update(updatePayload).eq("id", 1);

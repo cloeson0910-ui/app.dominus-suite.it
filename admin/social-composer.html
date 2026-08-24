@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Post Social — IMMONOVA Admin</title>
+<title>Post Social — DOMINUS Admin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- Caricati solo per rendere l'ANTEPRIMA nel browser fedele ai font usati
@@ -132,7 +132,7 @@ button:disabled{opacity:.45; cursor:not-allowed}
 <body>
 
 <header class="top">
-  <div class="brand">IMMONOVA · Post Social</div>
+  <div class="brand">DOMINUS · Post Social</div>
   <a class="back" href="dashboard.html">&larr; Torna alla Dashboard</a>
 </header>
 
@@ -210,7 +210,7 @@ button:disabled{opacity:.45; cursor:not-allowed}
 
     <div class="field">
       <label>Link (opzionale, solo Facebook)</label>
-      <input type="url" id="fLink" placeholder="https://immonova-consulting.it/opportunity.html?id=26">
+      <input type="url" id="fLink" placeholder="https://dominus-suite.it/opportunity.html?id=26">
     </div>
     <div class="field">
       <label>Tipo</label>
@@ -256,7 +256,7 @@ button:disabled{opacity:.45; cursor:not-allowed}
         </select>
       </div>
       <div class="field" style="margin-bottom:8px">
-        <label>Sticker (originale in stile IMMONOVA — non è uno sticker ufficiale Instagram, che è un asset protetto da copyright e non riutilizzabile)</label>
+        <label>Sticker (originale in stile DOMINUS — non è uno sticker ufficiale Instagram, che è un asset protetto da copyright e non riutilizzabile)</label>
         <select id="fStorySticker">
           <option value="none">Nessuno</option>
           <option value="cta_arrow">Freccia + "Scopri di più"</option>
@@ -763,7 +763,7 @@ function buildFacebookPreview(p){
       <div class="fb-head">
         <div class="fb-avatar">IN</div>
         <div>
-          <div class="fb-name">IMMONOVA</div>
+          <div class="fb-name">DOMINUS</div>
           <div class="fb-sub">${p.post_type === "story" ? "Storia · ora" : "Ora · 🌐"}</div>
         </div>
       </div>
@@ -813,7 +813,7 @@ function buildInstagramPreview(p){
       ? `background-image:url('${escapeHTML(p.image_url)}');background-size:cover;background-position:center;filter:${cssFilter}`
       : "background:#f0f0f0";
 
-    // Sticker ORIGINALE in stile IMMONOVA (non uno sticker ufficiale
+    // Sticker ORIGINALE in stile DOMINUS (non uno sticker ufficiale
     // Instagram) — stessa posizione/logica del rendering reale lato
     // backend (vedi renderSticker() nell'Edge Function).
     let stickerHtml = "";
@@ -872,7 +872,7 @@ function buildLinkedinPreview(p){
       <div class="li-head">
         <div class="li-avatar">IN</div>
         <div>
-          <div class="li-name">IMMONOVA</div>
+          <div class="li-name">DOMINUS</div>
           <div class="li-sub">Pagina aziendale · Ora</div>
         </div>
       </div>

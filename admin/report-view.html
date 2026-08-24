@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Dossier | IMMONOVA</title>
+<title>Dossier | DOMINUS</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
 html,body{width:100%;min-height:100%}
@@ -153,7 +153,7 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;background:repeating-li
 </head>
 <body>
 <header class="header">
-  <a class="logo" href="../index.html">IMMONOVA<small>OFF MARKET • CONSULTING</small></a>
+  <a class="logo" href="../index.html">DOMINUS<small>OFF MARKET • CONSULTING</small></a>
   <div class="header-actions">
     <a href="dashboard.html" data-i18n="nav_dashboard">Dashboard</a>
     <a href="opportunities.html" data-i18n="nav_opportunities">Proposte</a>
@@ -314,7 +314,7 @@ var UI_STRINGS = {
   generated_prefix:"Generato ",
   toc_kicker:"Contents", toc_title:"Sommario",
   chapter_financial:"Analisi finanziaria", chapter_property:"Immobile", chapter_territory:"Territorio & mercato",
-  chapter_ecosystem:"Ecosistema & accessibilità", chapter_evaluation:"Valutazione IMMONOVA", chapter_sources:"Fonti & note",
+  chapter_ecosystem:"Ecosistema & accessibilità", chapter_evaluation:"Valutazione DOMINUS", chapter_sources:"Fonti & note",
   chapter_presentation:"Presentazione",
   kicker_presentation:"Editorial overview", title_presentation:"Presentazione della Proposta",
   kicker_narrative_analysis:"Narrative analysis", title_narrative_analysis:"Analisi Narrativa",
@@ -324,7 +324,7 @@ var UI_STRINGS = {
   divider_property_title:"L'Immobile", divider_property_kicker:"Property overview",
   divider_territory_title:"Territorio & Mercato", divider_territory_kicker:"Location intelligence",
   divider_ecosystem_title:"Ecosistema & Accessibilità", divider_ecosystem_kicker:"Territorial ecosystem",
-  divider_evaluation_title:"Valutazione IMMONOVA", divider_evaluation_kicker:"Analytical assessment",
+  divider_evaluation_title:"Valutazione DOMINUS", divider_evaluation_kicker:"Analytical assessment",
   divider_sources_title:"Fonti & Note", divider_sources_kicker:"Sources & disclaimer",
   kicker_internal_financial:"Internal financial base", title_internal_financial:"Dati economici interni",
   label_purchase_price:"Prezzo acquisto", note_purchase_price:"Dato opportunità / report interno.",
@@ -437,13 +437,13 @@ var UI_STRINGS = {
   kicker_data_sources:"Data sources", title_data_sources:"Fonti dei dati",
   sources_list_note:"Elenco delle fonti \u2014 automatiche (Discovery Engine) o verificate manualmente dall\u2019analista \u2014 usate per i dati economici e territoriali di questo dossier.",
   kicker_disclaimer:"Disclaimer & risk notice", title_legal_notes:"Note legali",
-  disclaimer_p1:"Il presente dossier è un documento riservato e confidenziale predisposto da IMMONOVA a fini esclusivamente informativi e preliminari.",
+  disclaimer_p1:"Il presente dossier è un documento riservato e confidenziale predisposto da DOMINUS a fini esclusivamente informativi e preliminari.",
   disclaimer_p2:"Le analisi contenute nel documento si basano su dati disponibili, fonti pubbliche verificate, override analitici manuali e modelli di calcolo espliciti. Tutti i valori indicati, inclusi ADR, valore al m², punteggio sintetico, ROI e break-even, hanno natura indicativa e non costituiscono garanzia di rendimento, promessa di risultato o previsione certa.",
   disclaimer_p3:"Il presente documento non costituisce offerta al pubblico, sollecitazione all\u2019investimento, consulenza finanziaria, legale, fiscale o immobiliare regolamentata.",
   disclaimer_p4:"Ogni decisione dovrà essere assunta autonomamente dal destinatario, previa verifica indipendente della documentazione immobiliare, urbanistica, catastale, tecnica, fiscale e legale.",
-  disclaimer_p5:"IMMONOVA non assume responsabilità per decisioni di investimento adottate sulla base del presente documento, né per scostamenti tra le stime contenute nel dossier e i risultati effettivi futuri.",
-  disclaimer_p6:"Documento strettamente riservato. Vietata la riproduzione, distribuzione o condivisione a terzi senza autorizzazione scritta di IMMONOVA.",
-  kicker_analytical_assessment:"Analytical assessment", title_immonova_evaluation:"Valutazione IMMONOVA",
+  disclaimer_p5:"DOMINUS non assume responsabilità per decisioni di investimento adottate sulla base del presente documento, né per scostamenti tra le stime contenute nel dossier e i risultati effettivi futuri.",
+  disclaimer_p6:"Documento strettamente riservato. Vietata la riproduzione, distribuzione o condivisione a terzi senza autorizzazione scritta di DOMINUS.",
+  kicker_analytical_assessment:"Analytical assessment", title_immonova_evaluation:"Valutazione DOMINUS",
   synthetic_score_label:"Punteggio sintetico",
   grade_solid:"Solido", grade_average:"Nella media", grade_fragile:"Fragile", grade_weak:"Debole",
   composition_prefix:"Composizione (", composition_mid:"/", composition_suffix:" aree con dati verificati)",
@@ -495,7 +495,7 @@ var UI_STRINGS = {
   eco_heritage:"Cultura e patrimonio", eco_heritage_kicker:"Heritage & culture",
   eco_nightlife:"Vita notturna", eco_nightlife_kicker:"Nightlife",
   eco_shopping:"Shopping & Retail", eco_shopping_kicker:"Luxury shopping & retail",
-  default_dossier_title:"Dossier IMMONOVA",
+  default_dossier_title:"Dossier DOMINUS",
   /* v10.8: etichette per i codici unità grezzi che arrivano dai dati del
      Discovery Engine (es. "eur_per_m2", "people_per_km2") — prima venivano
      stampati letteralmente così come sono, in nessuna lingua, perché non
@@ -548,7 +548,7 @@ async function loadTranslatedStrings(lang){
   var keys = Object.keys(UI_STRINGS);
   var texts = keys.map(function(k){ return UI_STRINGS[k]; });
   var translated = await translateTextsSafe(lang, keys, texts, UI_STRINGS,
-    "IMMONOVA luxury real estate investment dossier delivered to an international investor: cover, table of contents, financial analysis, property section, territorial/market data, ecosystem listings, evaluation score, sources, legal disclaimer.");
+    "DOMINUS luxury real estate investment dossier delivered to an international investor: cover, table of contents, financial analysis, property section, territorial/market data, ecosystem listings, evaluation score, sources, legal disclaimer.");
   try{ localStorage.setItem(cacheKey, JSON.stringify(translated)); }catch(e){}
   return translated;
 }
@@ -705,7 +705,7 @@ async function loadNarrativeTranslations(){
 
   var texts = present.map(function(f){ return clean(o[f]); });
   translatedNarrative = await translateTextsSafe(CURRENT_LANG, present, texts, fallbackByKey,
-    "IMMONOVA luxury real estate investment dossier — editorial/narrative text describing a specific property proposal for an international investor (presentation overview and narrative analysis: location appeal, tourism context, real estate market, short-let potential).");
+    "DOMINUS luxury real estate investment dossier — editorial/narrative text describing a specific property proposal for an international investor (presentation overview and narrative analysis: location appeal, tourism context, real estate market, short-let potential).");
   try{ localStorage.setItem(cacheKey, JSON.stringify(translatedNarrative)); }catch(e){}
 }
 function narrativeField(name){
@@ -735,7 +735,7 @@ function percent(value){var n=Number(value);if(!Number.isFinite(n))return "-";re
 function clean(v){return String(v||"").trim();}
 function setStatus(message,type){statusBox.className="status "+(type||"");statusBox.textContent=message||"";}
 function normalizeGallery(value){if(!value)return[];if(Array.isArray(value))return value.filter(Boolean);try{var p=JSON.parse(value);return Array.isArray(p)?p.filter(Boolean):[]}catch(e){return[]}}
-function getTitle(){return clean(opportunity&&opportunity.title)||clean(report&&report.title)||T.default_dossier_title||"Dossier IMMONOVA";}
+function getTitle(){return clean(opportunity&&opportunity.title)||clean(report&&report.title)||T.default_dossier_title||"Dossier DOMINUS";}
 function getLocation(){return clean(opportunity&&opportunity.location)||clean(report&&report.location)||clean(opportunity&&opportunity.municipality)||"";}
 function getCategory(){return clean(opportunity&&opportunity.category)||clean(report&&report.category)||"";}
 function getCoverImage(){var gallery=normalizeGallery(opportunity&&opportunity.gallery_images);return clean(opportunity&&opportunity.cover_image)||gallery[0]||"";}
@@ -1225,7 +1225,7 @@ function dividerPageHTML(title,kicker){
   return '<article class="report-page '+(withImage?'':'pattern')+' cover '+(withImage?'with-image':'')+'">'
     +(withImage?'<img class="cover-bg" src="'+escapeHTML(photo.photo_url)+'" alt="">':'')
     +'<div class="page-inner cover" style="justify-content:flex-end">'
-    +'<div><div class="brand">IMMONOVA</div><div class="brand-sub">Off Market • Consulting</div></div>'
+    +'<div><div class="brand">DOMINUS</div><div class="brand-sub">Off Market • Consulting</div></div>'
     +'<div><div class="cover-kicker">'+escapeHTML(kicker)+'</div><h1 class="cover-title divider-title">'+escapeHTML(title)+'</h1></div>'
     +'<div class="cover-meta">'+(credit?escapeHTML(credit):"")+'</div>'
     +'</div></article>';
@@ -1877,7 +1877,7 @@ function buildFinance(){
   var breakEven=firstFinite(report&&report.break_even_years,sr.break_even_years,a.break_even_years,deepFind(j,["break_even_years","break_even","breakeven"]),(total>0&&net>0)?total/net:0);
   return {purchase:purchase,taxes:taxes,notary:notary,agency:agency,dueDiligence:dueDiligence,acquisition:acquisition,renovation:renovation,tech:tech,ffe:ffe,marketing:marketing,contingency:contingency,development:development,total:total,revenue:revenue,costs:costs,net:net,roi:roi,breakEven:breakEven};
 }
-function renderCover(){var cover=getCoverImage();var withImage=!!cover;return '<article class="report-page '+(withImage?'':'pattern')+' cover '+(withImage?'with-image':'')+'">'+(withImage?'<img class="cover-bg" src="'+escapeHTML(cover)+'" alt="">':'')+'<div class="page-inner cover">'+'<div><div class="brand">IMMONOVA</div><div class="brand-sub">Off Market • Consulting</div></div>'+'<div><div class="cover-kicker">'+escapeHTML(T.cover_kicker)+'</div><h1 class="cover-title">'+escapeHTML(getTitle())+'</h1></div>'+'<div class="cover-meta">'+[getLocation(),getCategory(),T.generated_prefix+getGeneratedDate()].filter(Boolean).map(escapeHTML).join('<br>')+'</div>'+'</div></article>';}
+function renderCover(){var cover=getCoverImage();var withImage=!!cover;return '<article class="report-page '+(withImage?'':'pattern')+' cover '+(withImage?'with-image':'')+'">'+(withImage?'<img class="cover-bg" src="'+escapeHTML(cover)+'" alt="">':'')+'<div class="page-inner cover">'+'<div><div class="brand">DOMINUS</div><div class="brand-sub">Off Market • Consulting</div></div>'+'<div><div class="cover-kicker">'+escapeHTML(T.cover_kicker)+'</div><h1 class="cover-title">'+escapeHTML(getTitle())+'</h1></div>'+'<div class="cover-meta">'+[getLocation(),getCategory(),T.generated_prefix+getGeneratedDate()].filter(Boolean).map(escapeHTML).join('<br>')+'</div>'+'</div></article>';}
 function renderInternalFacts(){
   var f=buildFinance();
   return '<article class="report-page"><div class="page-inner"><div class="section-kicker">'+escapeHTML(T.kicker_internal_financial)+'</div><h2 class="section-title">'+escapeHTML(T.title_internal_financial)+'</h2><div class="lux-rule"></div><div class="metric-grid"><div class="metric-card"><div class="metric-label">'+escapeHTML(T.label_purchase_price)+'</div><div class="metric-value">'+escapeHTML(euro(f.purchase))+'</div><div class="metric-note">'+escapeHTML(T.note_purchase_price)+'</div></div><div class="metric-card"><div class="metric-label">'+escapeHTML(T.label_total_acquisition)+'</div><div class="metric-value">'+escapeHTML(euro(f.acquisition))+'</div><div class="metric-note">'+escapeHTML(T.note_total_acquisition)+'</div></div><div class="metric-card"><div class="metric-label">'+escapeHTML(T.label_total_development)+'</div><div class="metric-value">'+escapeHTML(euro(f.development))+'</div><div class="metric-note">'+escapeHTML(T.note_total_development)+'</div></div><div class="metric-card"><div class="metric-label">'+escapeHTML(T.label_total_project_cost)+'</div><div class="metric-value">'+escapeHTML(euro(f.total))+'</div><div class="metric-note">'+escapeHTML(T.note_total_project_cost)+'</div></div></div></div></article>';
@@ -2103,7 +2103,7 @@ function renderDebugBootstrap(){
 
 /* ---- Numerazione pagine (folio), applicata SOLO alle pagine effettivamente stampate ---- */
 function injectFolio(html,n,total,onImage){
-  var folio='<div class="page-folio'+(onImage?' on-image':'')+'"><span>IMMONOVA · '+escapeHTML(getTitle())+'</span><span>'+n+' / '+total+'</span></div>';
+  var folio='<div class="page-folio'+(onImage?' on-image':'')+'"><span>DOMINUS · '+escapeHTML(getTitle())+'</span><span>'+n+' / '+total+'</span></div>';
   return html.replace(/<\/article>\s*$/,folio+'</article>');
 }
 
@@ -2715,7 +2715,7 @@ function renderBook(){
   /* Ordine capitoli v3 (definito dall'utente): dopo la presentazione editoriale, subito
      Territorio & Mercato (demografia, turismo, ADR/valore al mq — i dati di supporto), poi
      Analisi Finanziaria (ROI/break-even, ora giustificati dai numeri appena visti), poi
-     Ecosistema, poi Immobile (foto/render/documenti). Valutazione IMMONOVA chiude come
+     Ecosistema, poi Immobile (foto/render/documenti). Valutazione DOMINUS chiude come
      verdetto sintetico prima delle fonti. */
 
   push(T.chapter_territory, dividerPageHTML(T.divider_territory_title,T.divider_territory_kicker), true);
@@ -2832,7 +2832,7 @@ async function init(){
         setStatus("Dossier mostrato in "+quickLangSwitch.options[quickLangSwitch.selectedIndex].text+". Pronto per Stampa / PDF.","success");
       });
     }
-    setStatus("Caricamento dati interni IMMONOVA...","");
+    setStatus("Caricamento dati interni DOMINUS...","");
     await checkAuth();
     await loadOpportunity();
     // La prima applyLanguage() (sopra) e' avvenuta prima che l'opportunita'
@@ -2850,7 +2850,7 @@ async function init(){
     renderBook();
     var srcNote=dossierSource==="report"?"dati territoriali dal report salvato":dossierSource==="live"?"dati territoriali recuperati in tempo reale dal Discovery Engine":"nessun dato territoriale disponibile";
     var photoNote=destinationPhotos.length?(destinationPhotos.length+" foto destinazione trovat"+(destinationPhotos.length===1?"a":"e")+(destinationPhotos.length>1?", mostrate a rotazione tra le pagine divisorie":""))
-      :"nessuna foto destinazione caricata per questa zona — pagine divisorie mostrate con il pattern grafico IMMONOVA";
+      :"nessuna foto destinazione caricata per questa zona — pagine divisorie mostrate con il pattern grafico DOMINUS";
     if(lastPersistError){
       setStatus("ATTENZIONE: dossier generato e mostrato correttamente, MA il salvataggio su database è FALLITO — alla prossima apertura verrà richiesto di nuovo al Discovery Engine (altro costo). Causa: "+lastPersistError,"error");
     }else{

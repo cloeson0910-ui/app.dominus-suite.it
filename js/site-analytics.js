@@ -1,4 +1,4 @@
-/* IMMONOVA — Meta Pixel + Google Analytics inizializzati dinamicamente leggendo l'ID dal
+/* DOMINUS — Meta Pixel + Google Analytics inizializzati dinamicamente leggendo l'ID dal
    database (immonova_site_settings), invece di essere scritti a mano in ogni pagina.
 
    Da includere in ogni pagina PUBBLICA, dentro <head>, dopo js/config.js:

@@ -4,7 +4,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Modifica Opportunità | IMMONOVA Admin</title>
+<title>Modifica Opportunità | DOMINUS Admin</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -1147,7 +1147,7 @@ button.danger{
 <div class="page">
 
 <header class="header">
-  <div class="logo">IMMONOVA</div>
+  <div class="logo">DOMINUS</div>
 
   <nav class="nav">
     <a href="dashboard.html" data-i18n="nav_dashboard">Dashboard</a>
@@ -2162,7 +2162,7 @@ async function uploadOpportunityDocument(documentType, file, skipReload, index, 
     var safeName = cleanFileName(file.name || (documentType + ".pdf"));
     var path = id + "/" + documentType + "/" + Date.now() + "-" + safeName;
 
-    setDocumentRowProgress(documentType, prefix + "upload file su archivio IMMONOVA...", 35, true);
+    setDocumentRowProgress(documentType, prefix + "upload file su archivio DOMINUS...", 35, true);
 
     var uploadResult = await client
       .storage
@@ -3608,7 +3608,7 @@ async function loadTranslatedStrings(lang){
     body:{
       language: lang,
       source_language: "it",
-      context: "IMMONOVA luxury real estate investment website. Admin form for editing a property opportunity: main info, media, documents, technical data, renovation planning, location, AI-generated analysis, CRM investor match.",
+      context: "DOMINUS luxury real estate investment website. Admin form for editing a property opportunity: main info, media, documents, technical data, renovation planning, location, AI-generated analysis, CRM investor match.",
       texts: texts
     }
   });
@@ -4367,17 +4367,17 @@ function opportunityPreviewUrl(){
 }
 
 function opportunityBaseInfoText(investor){
-  var title = textOrNull("title") || "Opportunità IMMONOVA";
+  var title = textOrNull("title") || "Opportunità DOMINUS";
   var location = textOrNull("location") || textOrNull("municipality") || textOrNull("region") || "Location riservata";
   var category = textOrNull("category") || "Opportunità off market";
-  var shortDescription = textOrNull("short_description") || "Opportunità selezionata dal network IMMONOVA Off Market Consulting.";
+  var shortDescription = textOrNull("short_description") || "Opportunità selezionata dal network DOMINUS Off Market Consulting.";
   var name = investor ? ((investor.first_name || "") + " " + (investor.last_name || "")).trim() : "";
   var greeting = name ? ("Buongiorno " + name + ",") : "Buongiorno,";
 
   return [
     greeting,
     "",
-    "IMMONOVA ha selezionato per lei una nuova opportunità off-market che potrebbe essere coerente con il suo profilo di investimento.",
+    "DOMINUS ha selezionato per lei una nuova opportunità off-market che potrebbe essere coerente con il suo profilo di investimento.",
     "",
     "Asset: " + title,
     "Area: " + location,
@@ -4389,7 +4389,7 @@ function opportunityBaseInfoText(investor){
     "",
     "Questa comunicazione contiene solo informazioni preliminari. Il dossier completo e i dati economici riservati vengono condivisi esclusivamente su richiesta e previa valutazione interna.",
     "",
-    "IMMONOVA",
+    "DOMINUS",
     "Off Market Consulting"
   ].join("\n");
 }
@@ -4398,7 +4398,7 @@ function buildEmailPayloadForInvestor(match){
   var inv = match.investor;
   var firstName = inv.first_name || "";
   var lastName = inv.last_name || "";
-  var fullName = ((firstName + " " + lastName).trim()) || inv.full_name || "Investitore IMMONOVA";
+  var fullName = ((firstName + " " + lastName).trim()) || inv.full_name || "Investitore DOMINUS";
 
   return {
     to:inv.email,
@@ -4406,7 +4406,7 @@ function buildEmailPayloadForInvestor(match){
     investor_name:fullName,
     name:fullName,
     opportunity_id:Number(id),
-    opportunity_title:textOrNull("title") || "Opportunità IMMONOVA",
+    opportunity_title:textOrNull("title") || "Opportunità DOMINUS",
     location:textOrNull("location") || textOrNull("municipality") || textOrNull("region") || "Location riservata",
     category:textOrNull("category") || "Off Market",
     short_description:textOrNull("short_description") || "",

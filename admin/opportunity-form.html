@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nuova Opportunità | IMMONOVA Admin</title>
+<title>Nuova Opportunità | DOMINUS Admin</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -906,7 +906,7 @@ button.danger{
 <div class="page">
 
 <header class="header">
-  <div class="logo">IMMONOVA</div>
+  <div class="logo">DOMINUS</div>
 
   <nav class="nav">
     <a href="dashboard.html" data-i18n="nav_dashboard">Dashboard</a>
@@ -920,7 +920,7 @@ button.danger{
   <h1 data-i18n="title">Nuova Opportunità</h1>
 
   <p class="intro" data-i18n="intro">
-    Carica una nuova opportunità IMMONOVA. Puoi salvare e inviare la proposta anche con documenti mancanti: la pubblicazione resta sempre validata da un admin.
+    Carica una nuova opportunità DOMINUS. Puoi salvare e inviare la proposta anche con documenti mancanti: la pubblicazione resta sempre validata da un admin.
   </p>
 
   <div class="ai-box">
@@ -1757,7 +1757,7 @@ async function uploadOpportunityDocument(documentType, file, skipReload, index, 
     var safeName = cleanFileName(file.name || (documentType + ".pdf"));
     var path = id + "/" + documentType + "/" + Date.now() + "-" + safeName;
 
-    setDocumentRowProgress(documentType, prefix + "upload file su archivio IMMONOVA...", 35, true);
+    setDocumentRowProgress(documentType, prefix + "upload file su archivio DOMINUS...", 35, true);
 
     var uploadResult = await client
       .storage
@@ -2723,7 +2723,7 @@ async function uploadImage(file, path){
 var UI_STRINGS = {
   nav_dashboard:"Dashboard", nav_opportunities:"Opportunità", logout:"Logout",
   title:"Nuova Opportunità",
-  intro:"Carica una nuova opportunità IMMONOVA. Puoi salvare e inviare la proposta anche con documenti mancanti: la pubblicazione resta sempre validata da un admin.",
+  intro:"Carica una nuova opportunità DOMINUS. Puoi salvare e inviare la proposta anche con documenti mancanti: la pubblicazione resta sempre validata da un admin.",
   ai_title:"AI Assistant",
   ai_text:"Usa l\u2019IA per precompilare descrizioni, dati territoriali, aeroporto, distanze, analisi turistica, mercato e affitto breve prima dell\u2019invio.",
   btn_analyze_ai:"Analizza con IA", ai_analysis_title:"Analisi IA", progress_preparing:"Preparazione...",
@@ -2812,7 +2812,7 @@ async function loadTranslatedStrings(lang){
     body:{
       language: lang,
       source_language: "it",
-      context: "IMMONOVA luxury real estate investment website. Admin form for creating a new property opportunity: main info, media, documents, technical data, renovation planning, location, AI-generated analysis.",
+      context: "DOMINUS luxury real estate investment website. Admin form for creating a new property opportunity: main info, media, documents, technical data, renovation planning, location, AI-generated analysis.",
       texts: texts
     }
   });

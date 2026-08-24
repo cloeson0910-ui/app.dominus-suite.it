@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nuovo Investitore | IMMONOVA Admin</title>
+<title>Nuovo Investitore | DOMINUS Admin</title>
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -281,7 +281,7 @@ textarea{
 
 <header class="header">
   <a href="../index.html" class="logo">
-    <div class="logo-main">IMMONOVA</div>
+    <div class="logo-main">DOMINUS</div>
     <div class="logo-sub">OFF MARKET • CONSULTING</div>
   </a>
 
@@ -587,7 +587,7 @@ async function loadTranslatedStrings(lang){
     body:{
       language: lang,
       source_language: "it",
-      context: "IMMONOVA luxury real estate investment website. Admin form for creating/editing an investor CRM profile: personal data, contacts, investment profile, budget, geographic areas, categories, internal notes.",
+      context: "DOMINUS luxury real estate investment website. Admin form for creating/editing an investor CRM profile: personal data, contacts, investment profile, budget, geographic areas, categories, internal notes.",
       texts: texts
     }
   });
@@ -735,7 +735,7 @@ async function loadInvestor(){
   if(!investorId) return;
 
   pageTitle.textContent = T.title_edit;
-  document.title = "Modifica Investitore | IMMONOVA Admin";
+  document.title = "Modifica Investitore | DOMINUS Admin";
   saveBtn.textContent = T.btn_update;
 
   setProgress(T.msg_loading_investor, 25, "");

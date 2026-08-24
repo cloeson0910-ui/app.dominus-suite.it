@@ -2947,7 +2947,7 @@ async function sendDossierToClient(){
     var result=await client.functions.invoke("send-dossier-email",{
       body:{
         to:investorRequest.email,
-        cc:"amministrazione@immonova-consulting.it",
+        cc:"amministrazione@dominus-suite.it",
         client_name:investorRequest.full_name||[investorRequest.first_name,investorRequest.last_name].filter(Boolean).join(" ")||"",
         opportunity_title:getTitle(),
         pdf_url:pdfUrl,
