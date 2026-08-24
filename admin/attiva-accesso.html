@@ -227,25 +227,14 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    // 2) Il codice licenza dice a quale tenant appartiene questo account
-    //    — nessun indovinello su header o sessione.
-    const { data: tenantId, error: tenantErr } = await client.rpc("tenant_id_for_license_code", { code: licenseCode });
-    if(tenantErr || !tenantId){
-      activateBtn.textContent = "Attiva e accedi";
-      errorBox.textContent = "Codice licenza non riconosciuto.";
-      await client.auth.signOut();
-      return;
-    }
-
-    // 3) Salva la licenza per quel tenant (prima volta: la crea; se
-    //    richiamato di nuovo, aggiorna la stessa riga).
-    const { error: licenseErr } = await client.from("immonova_license").upsert(
-      { tenant_id: tenantId, license_code: licenseCode },
-      { onConflict: "tenant_id" }
-    );
+    // 2) Una funzione unica fa tutto lei (verifica il codice E scrive la
+    //    licenza), bypassando del tutto le regole di sicurezza a riga —
+    //    niente più bisogno di far quadrare permessi/regole separate.
+    const { error: licenseErr } = await client.rpc("activate_license", { code: licenseCode });
     if(licenseErr){
       activateBtn.textContent = "Attiva e accedi";
       errorBox.textContent = "Errore attivazione: " + licenseErr.message;
+      await client.auth.signOut();
       return;
     }
 
