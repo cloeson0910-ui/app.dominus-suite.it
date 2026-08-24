@@ -31,7 +31,12 @@ body{background:var(--page-bg-color,#f4ecdf);font-family:var(--font-family,"Aven
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="../js/config.js"></script>
 <script>
-const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+// IMPORTANTE: NON creare qui un client nuovo — quello creato da config.js
+// (window.supabaseClient) porta con sé l'header "x-tenant-slug", che dice
+// al database di quale cliente sono i dati che sta scrivendo. Un client
+// creato da zero qui non lo manda, e il database non sa a chi assegnare
+// la riga: la scrive vuota e la sicurezza la blocca giustamente.
+const client = window.supabaseClient;
 
 // Stesso valore usato in js/license-gate.js
 const CONTROL_PLANE_URL = "https://cspzkofhgfrnkhjpfazb.supabase.co"; // guestintown
@@ -78,7 +83,7 @@ window.activate = async function(){
   sessionStorage.removeItem("immonova_license_check");
   statusEl.textContent = "Attivato per " + (result.business_name || "") + " — reindirizzo...";
   statusEl.className = "status success";
-  setTimeout(() => { window.location.href = "dashboard.html"; }, 1200);
+  setTimeout(() => { window.location.href = "dashboard.html?benvenuto=1"; }, 1200);
 };
 </script>
 </body>
