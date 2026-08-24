@@ -70,10 +70,20 @@ window.activate = async function(){
     return;
   }
 
-  // Niente "id: 1" fisso: ogni tenant ha la propria riga (tenant_id si
-  // riempie da solo lato database) — "upsert" aggiorna quella riga se
-  // esiste già, altrimenti la crea.
-  const { error } = await client.from("immonova_license").upsert({ license_code: licenseCode }, { onConflict: "tenant_id" });
+  // Il codice licenza stesso dice a quale tenant appartiene — niente più
+  // affidamento su header/slug/sessione, che possono non essere presenti
+  // a questo punto (attivazione spesso fatta prima del login).
+  const { data: tenantId, error: tenantErr } = await client.rpc("tenant_id_for_license_code", { code: licenseCode });
+  if(tenantErr || !tenantId){
+    statusEl.textContent = "Codice non riconosciuto: " + (tenantErr ? tenantErr.message : "nessun tenant collegato a questo codice.");
+    statusEl.className = "status error";
+    return;
+  }
+
+  const { error } = await client.from("immonova_license").upsert(
+    { tenant_id: tenantId, license_code: licenseCode },
+    { onConflict: "tenant_id" }
+  );
   if(error){
     statusEl.textContent = "Errore salvataggio: " + error.message;
     statusEl.className = "status error";
