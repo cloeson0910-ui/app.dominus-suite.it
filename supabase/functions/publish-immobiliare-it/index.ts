@@ -29,7 +29,7 @@ function jsonResponse(body: unknown, status = 200) {
   });
 }
 
-// Mappa il tipo immobile usato in Immonova sul codice numerico IDType
+// Mappa il tipo immobile usato in Dominus sul codice numerico IDType
 // richiesto dallo schema Immobiliare.it. Da completare/verificare con la
 // tabella codici ufficiale fornita dal loro supporto tecnico — questi sono
 // i valori più comuni per residenziale.

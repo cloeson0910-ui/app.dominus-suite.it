@@ -1,8 +1,8 @@
 // Supabase Edge Function: immonova-google-calendar-push
 // Equivalente di icloud-calendar-push ma per Google Calendar: scrive/aggiorna/elimina
-// l'appuntamento IMMONOVA nel Google Calendar personale del proprietario dell'evento
+// l'appuntamento DOMINUS nel Google Calendar personale del proprietario dell'evento
 // (se lo ha collegato). Stesso comportamento "silenzioso" se non collegato: success con
-// skipped=true, l'evento resta comunque salvato solo su IMMONOVA.
+// skipped=true, l'evento resta comunque salvato solo su DOMINUS.
 //
 // Input atteso (JSON): { action, event_id, title, event_type, start_at, end_at, notes,
 //                         address, google_event_id (solo per update/delete) }
@@ -111,7 +111,7 @@ serve(async (req) => {
     return jsonResponse({ success: true, skipped: true, note: "Nessuna connessione Google Calendar attiva per il proprietario dell'evento." }, 200);
   }
 
-  const title = String(body.title || "Appuntamento IMMONOVA");
+  const title = String(body.title || "Appuntamento DOMINUS");
   const eventType = String(body.event_type || "");
   const startAt = String(body.start_at || "");
   const endAt = String(body.end_at || "");

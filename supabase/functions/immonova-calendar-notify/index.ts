@@ -33,7 +33,7 @@ const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 // diverso da questi due, va aggiornato qui (e nella variabile corrispondente più sotto).
 const VAPID_PUBLIC_KEY = Deno.env.get("VAPID_PUBLIC_KEY");
 const VAPID_PRIVATE_KEY = Deno.env.get("VAPID_PRIVATE_KEY");
-const VAPID_SUBJECT = Deno.env.get("VAPID_SUBJECT") || "mailto:amministrazione@immonova-consulting.it";
+const VAPID_SUBJECT = Deno.env.get("VAPID_SUBJECT") || "mailto:amministrazione@dominus-suite.it";
 
 function jsonResponse(body: Record<string, unknown>, status: number) {
   return new Response(JSON.stringify(body), {
@@ -64,7 +64,7 @@ serve(async (req) => {
   }
 
   const userIds = Array.isArray(body.user_ids) ? body.user_ids.map((v) => String(v)).filter(Boolean) : [];
-  const title = String(body.title || "IMMONOVA Calendario").trim();
+  const title = String(body.title || "DOMINUS Calendario").trim();
   const notifBody = String(body.body || "").trim();
   const url = String(body.url || "/admin/calendar.html").trim();
 

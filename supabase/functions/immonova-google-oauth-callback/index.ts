@@ -7,7 +7,7 @@
 // Secret richiesti: GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_OAUTH_REDIRECT_URI
 // (deve combaciare ESATTAMENTE con quello configurato nel progetto Google Cloud e con
 // quello usato da immonova-google-oauth-start), più SITE_URL (es.
-// https://immonova-consulting.it) per costruire il redirect finale verso il sito.
+// https://dominus-suite.it) per costruire il redirect finale verso il sito.
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -18,7 +18,7 @@ const GOOGLE_CLIENT_ID = Deno.env.get("GOOGLE_CLIENT_ID");
 const GOOGLE_CLIENT_SECRET = Deno.env.get("GOOGLE_CLIENT_SECRET");
 const GOOGLE_OAUTH_REDIRECT_URI = Deno.env.get("GOOGLE_OAUTH_REDIRECT_URI");
 const STATE_SECRET = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-const SITE_URL = Deno.env.get("SITE_URL") || "https://immonova-consulting.it";
+const SITE_URL = Deno.env.get("SITE_URL") || "https://dominus-suite.it";
 
 async function verifyState(state: string): Promise<string | null> {
   const parts = state.split(".");
@@ -79,7 +79,7 @@ serve(async (req) => {
       // riemette un refresh_token. prompt=consent in oauth-start dovrebbe evitarlo, ma en caso
       // avvisiamo chiaramente invece di salvare una connessione che smetterà di funzionare al
       // primo refresh necessario.
-      return redirectToCalendar("error", "Google non ha restituito un refresh token: revoca l'accesso IMMONOVA dal tuo account Google e riprova.");
+      return redirectToCalendar("error", "Google non ha restituito un refresh token: revoca l'accesso DOMINUS dal tuo account Google e riprova.");
     }
 
     const expiresAt = new Date(Date.now() + (tokenJson.expires_in || 3600) * 1000).toISOString();

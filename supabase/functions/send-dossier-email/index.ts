@@ -52,7 +52,7 @@ function arrayBufferToBase64(buffer: ArrayBuffer): string {
   return btoa(binary);
 }
 
-function buildImmonovaEmailHtml(title: string, innerHtml: string): string {
+function buildDominusEmailHtml(title: string, innerHtml: string): string {
   return "" +
     "<div style=\"background:#f4ecdf;padding:40px 20px;font-family:'Avenir Next','Helvetica Neue',Arial,sans-serif;\">" +
       "<div style=\"max-width:560px;margin:0 auto;background:#ffffff;border:1px solid rgba(166,127,52,.25);\">" +
@@ -85,7 +85,7 @@ function emailBody(clientName: string, opportunityTitle: string, language: strin
       "<p style=\"" + pStyle + "\">Best regards,<br>DOMINUS Off Market Consulting</p>";
     return {
       subject: "Your Confidential Investment Dossier — " + opportunityTitle,
-      html: buildImmonovaEmailHtml("Confidential Investment Dossier", innerHtml),
+      html: buildDominusEmailHtml("Confidential Investment Dossier", innerHtml),
     };
   }
 
@@ -98,7 +98,7 @@ function emailBody(clientName: string, opportunityTitle: string, language: strin
 
   return {
     subject: "Il tuo Dossier Riservato DOMINUS — " + opportunityTitle,
-    html: buildImmonovaEmailHtml("Dossier Riservato DOMINUS", innerHtmlIt),
+    html: buildDominusEmailHtml("Dossier Riservato DOMINUS", innerHtmlIt),
   };
 }
 

@@ -1,5 +1,5 @@
 // Supabase Edge Function: immonova-calendar-connect-icloud
-// Un utente autenticato collega il proprio account iCloud al calendario IMMONOVA:
+// Un utente autenticato collega il proprio account iCloud al calendario DOMINUS:
 // riceve email + app-specific password, VERIFICA che funzionino davvero facendo una
 // chiamata CalDAV di prova (altrimenti si scoprirebbe solo al primo sync automatico,
 // magari ore dopo), e solo se valide le salva in immonova_calendar_connections.

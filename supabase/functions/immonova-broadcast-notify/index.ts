@@ -36,7 +36,7 @@ const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 const ANON_KEY = Deno.env.get("SUPABASE_ANON_KEY");
 const VAPID_PUBLIC_KEY = Deno.env.get("VAPID_PUBLIC_KEY");
 const VAPID_PRIVATE_KEY = Deno.env.get("VAPID_PRIVATE_KEY");
-const VAPID_SUBJECT = Deno.env.get("VAPID_SUBJECT") || "mailto:amministrazione@immonova-consulting.it";
+const VAPID_SUBJECT = Deno.env.get("VAPID_SUBJECT") || "mailto:amministrazione@dominus-suite.it";
 
 function jsonResponse(body: Record<string, unknown>, status: number) {
   return new Response(JSON.stringify(body), {
@@ -109,7 +109,7 @@ serve(async (req) => {
     return jsonResponse({ success: true, count: count || 0 }, 200);
   }
 
-  const title = String(body.title || "IMMONOVA").trim();
+  const title = String(body.title || "DOMINUS").trim();
   const notifBody = String(body.body || "").trim();
   const url = String(body.url || "/index.html").trim();
 

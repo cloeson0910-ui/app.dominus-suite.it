@@ -1,5 +1,5 @@
 // Supabase Edge Function: icloud-calendar-push
-// Quando un utente fissa un appuntamento da IMMONOVA, questa funzione lo scrive anche sul
+// Quando un utente fissa un appuntamento da DOMINUS, questa funzione lo scrive anche sul
 // SUO calendario iCloud personale (se lo ha collegato) — comparirà su iPhone/Mac.
 // Chiamata da calendar.html subito dopo aver salvato la riga in immonova_calendar_events.
 //
@@ -9,7 +9,7 @@
 // globali), qui le credenziali vengono lette dalla connessione iCloud del PROPRIETARIO
 // dell'evento (immonova_calendar_connections, letto tramite created_by dell'evento). Se
 // quell'utente non ha collegato un account iCloud, la funzione non è un errore: risponde
-// success con skipped=true, così l'evento resta comunque salvato solo su IMMONOVA.
+// success con skipped=true, così l'evento resta comunque salvato solo su DOMINUS.
 //
 // Secret opzionale: ICLOUD_CALENDAR_NAME — nome esatto (displayname) del calendario iCloud
 // su cui scrivere i nuovi appuntamenti, se si vuole evitare "il primo trovato".
@@ -196,12 +196,12 @@ serve(async (req) => {
 
   if (!conn) {
     // Non è un errore: l'utente semplicemente non ha collegato iCloud. L'evento resta
-    // salvato solo su IMMONOVA.
+    // salvato solo su DOMINUS.
     return jsonResponse({ success: true, skipped: true, note: "Nessuna connessione iCloud attiva per il proprietario dell'evento." }, 200);
   }
   const authHeader = basicAuthHeader(conn.icloud_username, conn.icloud_app_password);
 
-  const title = String(body.title || "Appuntamento IMMONOVA");
+  const title = String(body.title || "Appuntamento DOMINUS");
   const eventType = String(body.event_type || "");
   const startAt = String(body.start_at || "");
   const endAt = String(body.end_at || "");
@@ -225,7 +225,7 @@ serve(async (req) => {
       const ics = [
         "BEGIN:VCALENDAR",
         "VERSION:2.0",
-        "PRODID:-//IMMONOVA//Calendario//IT",
+        "PRODID:-//DOMINUS//Calendario//IT",
         "BEGIN:VEVENT",
         "UID:" + icloudUid,
         "DTSTAMP:" + icsDateFormat(new Date().toISOString()),
@@ -272,13 +272,13 @@ async function createIcloudEvent(supabase: ReturnType<typeof createClient>, auth
     const calendarHomePath = await discoverCalendarHome(principalPath, authHeader);
     const calendarPath = await findFirstWritableCalendar(calendarHomePath, authHeader);
 
-    const uid = "immonova-" + eventId + "-" + Date.now() + "@immonova-consulting.it";
+    const uid = "immonova-" + eventId + "-" + Date.now() + "@dominus-suite.it";
     const fullTitle = eventTypeLabel(eventType) + " — " + title;
 
     const ics = [
       "BEGIN:VCALENDAR",
       "VERSION:2.0",
-      "PRODID:-//IMMONOVA//Calendario//IT",
+      "PRODID:-//DOMINUS//Calendario//IT",
       "BEGIN:VEVENT",
       "UID:" + uid,
       "DTSTAMP:" + icsDateFormat(new Date().toISOString()),
