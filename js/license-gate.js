@@ -13,8 +13,8 @@
 // login/apertura del browser.
 
 (function () {
-  const CONTROL_PLANE_URL = "https://TUO-PROGETTO-CONTROL-PLANE.supabase.co"; // stesso valore di cp_config.js
-  const CONTROL_PLANE_ANON_KEY = "INCOLLA-QUI-LA-ANON-KEY-DEL-CONTROL-PLANE";
+  const CONTROL_PLANE_URL = "https://cspzkofhgfrnkhjpfazb.supabase.co"; // guestintown, stesso progetto di js/config.js
+  const CONTROL_PLANE_ANON_KEY = "sb_publishable_oYbR_A78f8SRKdJbkeZegQ_4gAx-567";
 
   async function getLicenseCode(supabaseClient) {
     const { data } = await supabaseClient.from("immonova_license").select("license_code").eq("id", 1).maybeSingle();
