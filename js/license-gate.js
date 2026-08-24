@@ -17,7 +17,9 @@
   const CONTROL_PLANE_ANON_KEY = "sb_publishable_oYbR_A78f8SRKdJbkeZegQ_4gAx-567";
 
   async function getLicenseCode(supabaseClient) {
-    const { data } = await supabaseClient.from("immonova_license").select("license_code").eq("id", 1).maybeSingle();
+    // Niente filtro per id: ogni tenant ha la propria riga, e le regole di
+    // sicurezza del database mostrano automaticamente solo quella giusta.
+    const { data } = await supabaseClient.from("immonova_license").select("license_code").maybeSingle();
     return data?.license_code || null;
   }
 
