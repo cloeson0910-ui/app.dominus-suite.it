@@ -21,7 +21,7 @@ create table if not exists public.immonova_theme_settings (
 
   -- Sfondo: 'pattern' (il motivo a triangoli, personalizzabile), 'solid' (tinta unita),
   -- 'image' (immagine caricata), 'none' (nessun effetto, solo page_bg_color)
-  background_mode text not null default 'pattern' check (background_mode in ('pattern','solid','image','none')),
+  background_mode text not null default 'none' check (background_mode in ('pattern','solid','image','none')),
   background_pattern_color text not null default 'rgba(188,149,78,.23)',
   background_pattern_opacity numeric not null default 0.30,
   background_image_url text,
