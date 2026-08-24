@@ -31,7 +31,7 @@ fbq('track', 'PageView');
 html,body{width:100%;min-height:100%}
 body{background:var(--page-bg-color,#f4ecdf);font-family:"Avenir Next","Helvetica Neue",Arial,sans-serif;color:var(--text-color,#7f6430);overflow-x:hidden}
 body::before{content:"";position:fixed;inset:0;z-index:-2;background:radial-gradient(circle at center,rgba(255,255,255,.72) 0%,rgba(255,255,255,.34) 38%,rgba(244,236,223,.06) 72%),var(--page-bg-color,#f4ecdf)}
-body::after{content:"";position:fixed;inset:0;z-index:-1;background:repeating-linear-gradient(60deg,transparent 0 86px,rgba(188,149,78,.23) 87px,transparent 90px),repeating-linear-gradient(-60deg,transparent 0 86px,rgba(188,149,78,.22) 87px,transparent 90px),repeating-linear-gradient(0deg,transparent 0 148px,rgba(188,149,78,.13) 149px,transparent 152px);background-size:230px 199px;opacity:.30}
+body::after{content:"";position:fixed;inset:0;z-index:-1;background:none,none,none;background-size:230px 199px;opacity:.30}
 .header{padding:30px 42px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(166,127,52,.14);background:rgba(244,236,223,.72);backdrop-filter:blur(14px)}
 .logo{text-decoration:none;color:var(--primary-color,#a67f34)}.logo-main{font-size:28px;font-weight:300;letter-spacing:.35em}.logo-sub{margin-top:6px;font-size:9px;font-weight:700;letter-spacing:.18em;color:#a58139;text-transform:uppercase}
 .nav-note{font-size:10px;letter-spacing:.20em;text-transform:uppercase;color:#a58139;border:1px solid rgba(166,127,52,.26);padding:11px 18px;background:rgba(255,255,255,.20)}
@@ -42,7 +42,7 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;background:repeating-li
 <header class="header">
   <a class="logo" href="index.html">
     <div class="logo-main">DOMINUS</div>
-    <div class="logo-sub">OFF MARKET • CONSULTING</div>
+    
   </a>
   <div class="nav-note">Anteprima riservata</div>
 </header>

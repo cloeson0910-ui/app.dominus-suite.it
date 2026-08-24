@@ -53,15 +53,12 @@
     }
 
     // Sfondo pagina: quattro modalità gestite qui, tutte lette da variabili così
-    // le pagine non devono sapere quale modalità è attiva.
-    var mode = theme.background_mode || "pattern";
-    if(mode === "pattern"){
-      var patternColor = theme.background_pattern_color || "rgba(188,149,78,.23)";
-      var opacity = (theme.background_pattern_opacity != null ? theme.background_pattern_opacity : 0.30);
-      css += "body::after{content:'';position:fixed;inset:0;z-index:-1;" +
-        "background:repeating-linear-gradient(60deg,transparent 0 86px," + patternColor + " 87px,transparent 90px)," +
-        "repeating-linear-gradient(-60deg,transparent 0 86px," + patternColor + " 87px,transparent 90px);" +
-        "background-size:230px 199px;opacity:" + opacity + ";}\n";
+    // le pagine non devono sapere quale modalità è attiva. Il motivo a triangoli
+    // (identità del brand originale) non è più un'opzione qui: default "none",
+    // solo il colore di fondo pagina piatto.
+    var mode = theme.background_mode || "none";
+    if(mode === "pattern" || mode === "none" || mode === "solid"){
+      css += "body::after{content:none;}\n";
     }else if(mode === "image" && theme.background_image_url){
       css += "body::after{content:'';position:fixed;inset:0;z-index:-1;" +
         "background:url('" + theme.background_image_url + "') center/cover no-repeat;opacity:1;}\n";
