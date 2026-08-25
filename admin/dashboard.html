@@ -133,6 +133,23 @@ body::after{
 }
 .btn.secondary{background:rgba(255,255,255,.18);color:var(--primary-color,#a67f34)}
 .boot-status{margin-bottom:18px;padding:14px 16px;border:1px solid rgba(166,127,52,.18);background:rgba(255,252,244,.20);color:#8f7643;font-size:12px;line-height:1.6;display:none}.boot-status.error{color:#9c2f2f;border-color:rgba(156,47,47,.30)}.boot-status.success{color:#4f7f45;border-color:rgba(79,127,69,.30)}
+.trial-banner{margin-bottom:22px;padding:16px 20px;border:1px solid rgba(166,127,52,.28);background:rgba(255,252,244,.35)}
+.trial-banner.urgent{border-color:rgba(156,47,47,.4);background:rgba(156,47,47,.06)}
+.trial-banner-top{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:10px}
+.trial-banner-text{display:flex;flex-direction:column;gap:3px}
+.trial-banner-text strong{font-size:14px;letter-spacing:.02em;color:var(--primary-color,#a67f34)}
+.trial-banner.urgent .trial-banner-text strong{color:#9c2f2f}
+.trial-banner-text span{font-size:12px;color:#8f7643}
+.trial-buy-btn{white-space:nowrap;animation:trialPulse 1.8s ease-in-out infinite}
+.trial-banner.urgent .trial-buy-btn{background:#9c2f2f;border-color:#9c2f2f}
+@keyframes trialPulse{0%,100%{box-shadow:0 0 0 0 rgba(166,127,52,.35)}50%{box-shadow:0 0 0 7px rgba(166,127,52,0)}}
+.trial-banner.urgent .trial-buy-btn{animation:trialPulseUrgent 1.2s ease-in-out infinite}
+@keyframes trialPulseUrgent{0%,100%{box-shadow:0 0 0 0 rgba(156,47,47,.45)}50%{box-shadow:0 0 0 9px rgba(156,47,47,0)}}
+.trial-bar-track{height:6px;background:rgba(166,127,52,.14);overflow:hidden}
+.trial-bar-fill{height:100%;background:var(--primary-color,#a67f34);transition:width .4s ease}
+.trial-banner.urgent .trial-bar-fill{background:#9c2f2f}
+.trial-buy-status{margin-top:8px;font-size:12px;min-height:16px}
+.trial-buy-status.error{color:#9c2f2f}
 .global-search{margin-bottom:28px}
 .search-input{
   width:100%;
@@ -491,6 +508,18 @@ body::after{
       <a href="event-form.html" class="btn secondary admin-only" data-i18n="btn_new_event">Nuovo Evento</a>
     </div>
   </section>
+
+  <div id="trialBanner" class="trial-banner" style="display:none">
+    <div class="trial-banner-top">
+      <div class="trial-banner-text">
+        <strong id="trialBannerTitle">Prova gratuita</strong>
+        <span id="trialBannerDetail"></span>
+      </div>
+      <button type="button" class="btn trial-buy-btn" id="buyNowBtn">Compra ora</button>
+    </div>
+    <div class="trial-bar-track"><div class="trial-bar-fill" id="trialBarFill"></div></div>
+    <div id="trialBuyStatus" class="trial-buy-status"></div>
+  </div>
 
   <div id="bootStatus" class="boot-status"></div>
 
@@ -907,6 +936,79 @@ document.getElementById("logoutBtn").addEventListener("click",async()=>{await cl
    pacchetto scaduto). enabledPackages=null significa "pannello centrale non
    raggiungibile in questo momento" -> non filtriamo per non bloccare il
    cliente per un problema di rete nostro. ---- */
+/* ---- Barra di urgenza demo + pulsante "Compra ora": mostrata solo se
+   license-gate.js ha rilevato che questo è un cliente a tempo (isDemo).
+   Chiama l'edge function "client-checkout" sul pannello centrale, che il
+   cliente può usare da solo (non serve intervento manuale come per il link
+   generato da admin/subscriptions.html). ---- */
+const CONTROL_PLANE_URL_CHECKOUT = "https://cspzkofhgfrnkhjpfazb.supabase.co";
+const CONTROL_PLANE_ANON_KEY_CHECKOUT = "sb_publishable_oYbR_A78f8SRKdJbkeZegQ_4gAx-567";
+const DEMO_TRIAL_DAYS_TOTAL = 10; // stesso valore usato in dominus-lead-intake
+
+function renderTrialBanner(licenseResult){
+  var banner = document.getElementById("trialBanner");
+  if(!banner || !licenseResult || !licenseResult.isDemo || !licenseResult.demoExpiresAt) return;
+
+  var expiresAt = new Date(licenseResult.demoExpiresAt).getTime();
+  var now = Date.now();
+  var msLeft = expiresAt - now;
+  var hoursLeft = Math.max(0, Math.ceil(msLeft / (60*60*1000)));
+  var daysLeft = Math.max(0, Math.ceil(msLeft / (24*60*60*1000)));
+  var totalMs = DEMO_TRIAL_DAYS_TOTAL * 24*60*60*1000;
+  var pctElapsed = Math.min(100, Math.max(0, ((totalMs - msLeft) / totalMs) * 100));
+  var urgent = hoursLeft <= 48;
+
+  banner.style.display = "block";
+  banner.classList.toggle("urgent", urgent);
+  document.getElementById("trialBarFill").style.width = pctElapsed + "%";
+
+  var titleEl = document.getElementById("trialBannerTitle");
+  var detailEl = document.getElementById("trialBannerDetail");
+  if(msLeft <= 0){
+    titleEl.textContent = "Prova scaduta";
+    detailEl.textContent = "Attiva l'abbonamento per continuare a usare il gestionale senza interruzioni.";
+  }else if(hoursLeft <= 24){
+    titleEl.textContent = "Ultime " + hoursLeft + (hoursLeft===1?" ora":" ore") + " di prova";
+    detailEl.textContent = "Passa all'abbonamento ora per non perdere l'accesso.";
+  }else{
+    titleEl.textContent = "Prova gratuita: " + daysLeft + (daysLeft===1?" giorno rimasto":" giorni rimasti");
+    detailEl.textContent = "Attiva l'abbonamento quando vuoi — bastano due minuti.";
+  }
+}
+
+document.getElementById("buyNowBtn").addEventListener("click", async function(){
+  var btn = this;
+  var statusEl = document.getElementById("trialBuyStatus");
+  btn.disabled = true;
+  statusEl.className = "trial-buy-status";
+  statusEl.textContent = "Preparazione pagamento...";
+  try{
+    var licenseCode = await getLicenseCodeForCheckout();
+    if(!licenseCode) throw new Error("Codice licenza non trovato");
+    var res = await fetch(CONTROL_PLANE_URL_CHECKOUT + "/functions/v1/client-checkout", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "apikey": CONTROL_PLANE_ANON_KEY_CHECKOUT },
+      body: JSON.stringify({ license_code: licenseCode, return_url: window.location.origin + window.location.pathname })
+    });
+    var result = await res.json();
+    if(!result.success || !result.checkout_url) throw new Error(result.error || "risposta inattesa dal pagamento");
+    window.location.href = result.checkout_url;
+  }catch(e){
+    statusEl.className = "trial-buy-status error";
+    statusEl.textContent = "Errore: " + ((e && e.message) || e);
+    btn.disabled = false;
+  }
+});
+
+async function getLicenseCodeForCheckout(){
+  try{
+    var cached = sessionStorage.getItem("immonova_license_check");
+    if(cached){ var parsed = JSON.parse(cached); if(parsed.licenseCode) return parsed.licenseCode; }
+  }catch(e){}
+  var { data } = await client.rpc("get_my_license_code");
+  return data || null;
+}
+
 async function hideDisabledModuleLinks(licensedPackages){
   try{
     const { data, error } = await client.from("immonova_modules").select("key, package_key, enabled");
@@ -923,7 +1025,7 @@ async function hideDisabledModuleLinks(licensedPackages){
   }
 }
 
-(async function init(){try{setBoot("Caricamento dati dashboard...","");if(await checkAuth()){await loadProfile();let licenseResult={blocked:false,enabledPackages:null};if(window.immonovaLicenseGate){licenseResult=await window.immonovaLicenseGate.check(client);}if(licenseResult.blocked){return;}await hideDisabledModuleLinks(licenseResult.enabledPackages);await loadCollaborators();await loadReports();await loadOpportunities();renderAll(allOpportunities);await loadInvestors();renderAll(allOpportunities);await loadEvents();renderAll(allOpportunities);await loadContactHistory();renderAll(allOpportunities);await loadInvestorRequests();renderAll(allOpportunities);setBoot("","");}}catch(error){console.error(error);setBoot("Errore dashboard: "+(error.message||error),"error");}})();
+(async function init(){try{setBoot("Caricamento dati dashboard...","");if(await checkAuth()){await loadProfile();let licenseResult={blocked:false,enabledPackages:null};if(window.immonovaLicenseGate){licenseResult=await window.immonovaLicenseGate.check(client);}if(licenseResult.blocked){return;}renderTrialBanner(licenseResult);await hideDisabledModuleLinks(licenseResult.enabledPackages);await loadCollaborators();await loadReports();await loadOpportunities();renderAll(allOpportunities);await loadInvestors();renderAll(allOpportunities);await loadEvents();renderAll(allOpportunities);await loadContactHistory();renderAll(allOpportunities);await loadInvestorRequests();renderAll(allOpportunities);setBoot("","");}}catch(error){console.error(error);setBoot("Errore dashboard: "+(error.message||error),"error");}})();
 </script>
 </body>
 </html>
