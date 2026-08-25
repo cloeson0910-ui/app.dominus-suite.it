@@ -222,7 +222,7 @@ async function checkAdminRole(){
 async function loadSettings(){
   setStatus("Caricamento impostazioni...", "");
 
-  const result = await client.from("site_settings").select("*").maybeSingle();
+  const result = await client.from("site_settings").select("*").order("tenant_id",{ascending:false,nullsFirst:false}).limit(1).maybeSingle();
 
   if(result.error){
     /* Se la tabella non esiste ancora (migrazione SQL non eseguita), non blocca la pagina:

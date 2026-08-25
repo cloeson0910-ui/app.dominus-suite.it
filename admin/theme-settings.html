@@ -233,7 +233,7 @@ async function loadTheme(){
   // Niente più "id=1" fisso: le regole di sicurezza mostrano da sole solo
   // la riga del proprio tenant. maybeSingle perché un tenant nuovo può non
   // avere ancora nessuna riga (usa i valori di default sotto).
-  const { data, error } = await client.from("immonova_theme_settings").select("*").maybeSingle();
+  const { data, error } = await client.from("immonova_theme_settings").select("*").order("tenant_id",{ascending:false,nullsFirst:false}).limit(1).maybeSingle();
   if(error || !data) return;
 
   document.getElementById("primary_color").value = data.primary_color || "#a67f34";

@@ -148,7 +148,7 @@ async function checkAuthAdmin(){
 }
 
 async function loadSettings(){
-  var settingsResult = await client.from("immonova_site_settings").select("logo_url,company_name,meta_pixel_id,ga_measurement_id").maybeSingle();
+  var settingsResult = await client.from("immonova_site_settings").select("logo_url,company_name,meta_pixel_id,ga_measurement_id").order("tenant_id",{ascending:false,nullsFirst:false}).limit(1).maybeSingle();
   if(settingsResult.data){
     document.getElementById("companyName").value = settingsResult.data.company_name || "";
     document.getElementById("metaPixelId").value = settingsResult.data.meta_pixel_id || "";
