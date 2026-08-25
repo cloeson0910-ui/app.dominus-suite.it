@@ -290,12 +290,22 @@ async function saveTheme(){
   // "upsert" invece di "update...eq id=1": crea la riga del proprio tenant
   // se non esiste ancora, la aggiorna se già c'è — mai più la riga di
   // qualcun altro.
-  const { error } = await client.from("immonova_theme_settings").upsert(payload, { onConflict: "tenant_id" });
+  const { data, error } = await client.from("immonova_theme_settings").upsert(payload, { onConflict: "tenant_id" }).select();
 
   saveBtn.disabled = false;
 
   if(error){
     setStatus("Errore: " + error.message, "error");
+    return;
+  }
+
+  // Senza ".select()" sopra, un salvataggio bloccato in silenzio dalle regole
+  // di sicurezza (RLS) non dà nessun errore: la pagina direbbe "salvato"
+  // anche se in realtà nel database non è cambiato nulla, e al ricaricamento
+  // i colori tornano quelli di prima. Con ".select()" invece, se le regole
+  // bloccano la scrittura, "data" torna vuoto e lo segnaliamo davvero.
+  if(!data || !data.length){
+    setStatus("Salvataggio bloccato dai permessi: il database non ha applicato la modifica. Controlla che il tuo utente sia admin del tenant.", "error");
     return;
   }
 

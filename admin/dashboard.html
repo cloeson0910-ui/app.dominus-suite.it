@@ -458,7 +458,6 @@ body::after{
       <button type="button" class="nav-dropdown-btn"><span data-i18n="nav_group_admin">Gestione</span><span class="nav-dropdown-caret"></span></button>
       <div class="nav-dropdown-menu">
         <a href="inquiries.html" data-i18n="nav_requests">Richieste</a>
-        <a href="ads-manager.html" data-module-key="social_ads" data-i18n="nav_ads">Pubblicità</a>
         <a href="meta-ads-planner.html" data-module-key="social_ads_ab" data-i18n="nav_ads_ab">Test A/B Meta Ads</a>
         <a href="social-composer.html" data-module-key="social_composer" data-i18n="nav_social_composer">Post Social</a>
         <a href="email-composer.html" data-module-key="comunicazioni_email" data-i18n="nav_communications">Comunicazioni</a>
@@ -792,7 +791,7 @@ function applyViewText(){
 
 function setBoot(message,type){if(!bootStatus)return;bootStatus.textContent=message||"";bootStatus.className="boot-status "+(type||"");bootStatus.style.display=message?"block":"none"}
 async function checkAuth(){const {data:{session},error}=await client.auth.getSession();if(error||!session){window.location.href="login.html";return false}currentUser=session.user;return true}
-async function loadProfile(){const {data,error}=await client.from("profiles").select("id,email,full_name,role,language").eq("id",currentUser.id).single();if(error){console.error(error);return}currentProfile=data;isAdmin=currentProfile?.role==="admin"||currentProfile?.role==="ceo";await applyLanguage(currentProfile?.language||"it");roleLabel.textContent=isAdmin?T.role_admin:T.role_collaborator;document.querySelectorAll(".admin-only").forEach(el=>el.style.display=isAdmin?"inline-flex":"none");document.querySelectorAll(".admin-only-block").forEach(el=>el.style.display=isAdmin?"block":"none")}
+async function loadProfile(){const {data,error}=await client.from("profiles").select("id,email,full_name,role,language").eq("id",currentUser.id).maybeSingle();if(error){console.error(error);setBoot("Errore caricamento profilo (menu Gestione non visibile): "+error.message,"error");return}if(!data){console.error("Nessuna riga profiles per questo utente");setBoot("Profilo non trovato per questo utente: il menu Gestione resta nascosto finché non viene creato.","error");return}currentProfile=data;isAdmin=currentProfile?.role==="admin"||currentProfile?.role==="ceo";await applyLanguage(currentProfile?.language||"it");roleLabel.textContent=isAdmin?T.role_admin:T.role_collaborator;document.querySelectorAll(".admin-only").forEach(el=>el.style.display=isAdmin?"inline-flex":"none");document.querySelectorAll(".admin-only-block").forEach(el=>el.style.display=isAdmin?"block":"none")}
 
 async function loadCollaborators(){
   if(!isAdmin){
