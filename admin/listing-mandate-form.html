@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Incarico | DOMINUS Admin</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;min-height:100%}
+body{background:var(--page-bg-color,#f4ecdf);font-family:"Avenir Next","Helvetica Neue",Arial,sans-serif;color:var(--text-color,#7f6430)}
+.header{padding:30px 40px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(166,127,52,.12);background:rgba(244,236,223,.72);backdrop-filter:blur(14px);position:sticky;top:0;z-index:10}
+.logo{text-decoration:none;color:var(--primary-color,#a67f34)}
+.logo-main{font-size:24px;font-weight:600;letter-spacing:.35em}
+.header-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.header-actions a,.logout{padding:10px 20px;border:1px solid rgba(166,127,52,.25);background:rgba(255,255,255,.25);cursor:pointer;color:var(--primary-color,#a67f34);text-decoration:none;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+.header-actions a:hover,.logout:hover{background:var(--primary-color,#a67f34);color:#fff}
+.container{max-width:820px;margin:auto;padding:40px}
+.kicker{font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:#9a793c;margin-bottom:12px}
+.title{font-size:36px;font-weight:200;letter-spacing:.05em;color:var(--primary-color,#a67f34);margin-bottom:26px}
+.panel{background:rgba(255,255,255,.20);backdrop-filter:blur(8px);border:1px solid rgba(166,127,52,.15);padding:30px;box-shadow:0 24px 70px rgba(127,100,48,.07)}
+.section-title{font-size:16px;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:var(--primary-color,#a67f34);margin:26px 0 14px;padding-bottom:8px;border-bottom:1px solid rgba(166,127,52,.15)}
+.section-title:first-child{margin-top:0}
+.field{margin-bottom:16px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px}
+label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#8f7643;margin-bottom:6px}
+input,select,textarea{width:100%;padding:11px 12px;border:1px solid rgba(166,127,52,.25);background:rgba(255,255,255,.5);color:var(--text-color,#7f6430);font-family:inherit;font-size:13.5px}
+textarea{min-height:80px;resize:vertical}
+.check-row{display:flex;align-items:center;gap:10px;padding:10px 0}
+.check-row input{width:auto}
+.opp-list{max-height:260px;overflow:auto;border:1px solid rgba(166,127,52,.2);padding:10px;background:rgba(255,255,255,.3)}
+.opp-row{display:flex;align-items:center;gap:10px;padding:6px 4px;font-size:13px}
+.opp-row input{width:auto}
+.hint{font-size:11.5px;color:#9a8a63;margin-top:-8px;margin-bottom:16px;line-height:1.5}
+.actions-row{display:flex;gap:12px;margin-top:26px;align-items:center}
+button.primary{padding:13px 24px;border:1px solid var(--primary-color,#a67f34);background:var(--primary-color,#a67f34);color:#fff;cursor:pointer;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-family:inherit}
+a.secondary-link{padding:13px 20px;border:1px solid rgba(166,127,52,.3);color:var(--primary-color,#a67f34);text-decoration:none;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.form-status{font-size:13px;min-height:18px}
+.success{color:#4f7f45}
+.error{color:#9c2f2f}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+<a href="../index.html" class="logo"><div class="logo-main">DOMINUS</div></a>
+<div class="header-actions">
+<a href="dashboard.html">Dashboard</a>
+<a href="listing-mandates.html">Incarichi</a>
+<button class="logout" id="logoutBtn">Logout</button>
+</div>
+</header>
+
+<div class="container">
+
+<div class="kicker">Mandato di Vendita/Mediazione</div>
+<h1 class="title" id="pageTitle">Nuovo Incarico</h1>
+
+<div class="panel">
+
+<div class="section-title">Cliente</div>
+<div class="field">
+<label>Cliente venditore</label>
+<select id="clientId" required><option value="">Seleziona un cliente...</option></select>
+</div>
+<div class="hint">Solo i clienti marcati come "Venditore" nella scheda Investitori compaiono qui. Se non trovi il cliente che cerchi, aprilo prima da Investitori e spunta "Venditore".</div>
+
+<div class="section-title">Condizioni dell'incarico</div>
+<div class="row">
+<div class="field">
+<label>Data inizio</label>
+<input type="date" id="startDate" required>
+</div>
+<div class="field">
+<label>Durata (mesi)</label>
+<input type="number" id="durationMonths" min="1" value="6" required>
+</div>
+</div>
+<div class="row">
+<div class="field">
+<label>Tipo di incarico</label>
+<select id="exclusive">
+<option value="false">Non esclusiva</option>
+<option value="true">In esclusiva</option>
+</select>
+</div>
+<div class="field">
+<label>Provvigione pattuita (%)</label>
+<input type="number" id="commissionPercent" min="0" max="100" step="0.1" placeholder="Es. 3">
+</div>
+</div>
+<label class="check-row"><input type="checkbox" id="autoRenew"> <span>Rinnovo automatico alla scadenza (tacito rinnovo)</span></label>
+<div class="hint">Con il rinnovo automatico attivo, l'incarico non risulta mai "scaduto" da solo — resta attivo finché non lo risolvi tu manualmente.</div>
+
+<div class="field">
+<label>Stato</label>
+<select id="status">
+<option value="active">Attivo</option>
+<option value="terminated">Risolto (chiuso anticipatamente)</option>
+</select>
+</div>
+<div class="hint">Lo stato "Scaduto" viene calcolato automaticamente in base a data inizio + durata, se il rinnovo automatico non è attivo — non serve impostarlo a mano.</div>
+
+<div class="section-title">Opportunità collegate</div>
+<div class="field">
+<div class="opp-list" id="oppList"><div style="padding:8px;opacity:.6">Caricamento opportunità...</div></div>
+</div>
+<div class="hint">Spunta uno o più immobili a cui questo incarico si riferisce. Un incarico può coprire anche più immobili dello stesso cliente.</div>
+
+<div class="section-title">Note</div>
+<div class="field">
+<label>Note interne (opzionali)</label>
+<textarea id="notes" placeholder="Condizioni particolari, accordi verbali integrativi, promemoria..."></textarea>
+</div>
+
+<div class="actions-row">
+<button type="button" class="primary" id="saveBtn">Salva Incarico</button>
+<a class="secondary-link" href="listing-mandates.html">Annulla</a>
+</div>
+<div class="form-status" id="formStatus"></div>
+
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js"></script>
+<script src="../js/theme-loader.js"></script>
+<script src="../js/site-branding.js"></script>
+
+<script>
+const client = window.supabaseClient;
+let currentUser = null;
+let editingId = null;
+let allOpportunities = [];
+
+const params = new URLSearchParams(window.location.search);
+editingId = params.get("id");
+
+function escapeHTML(value){return String(value??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
+
+function setFormStatus(msg, type){
+  var el = document.getElementById("formStatus");
+  el.className = "form-status " + (type || "");
+  el.textContent = msg || "";
+}
+
+async function checkAuth(){
+  const { data:{ session } } = await client.auth.getSession();
+  if(!session){ window.location.href = "login.html"; return false; }
+  currentUser = session.user;
+  return true;
+}
+
+async function loadSellerClients(){
+  const { data, error } = await client
+    .from("investors")
+    .select("id,first_name,last_name,company")
+    .eq("is_seller", true)
+    .order("first_name");
+  var sel = document.getElementById("clientId");
+  if(error || !data || !data.length){
+    sel.innerHTML = '<option value="">Nessun cliente venditore trovato</option>';
+    return;
+  }
+  sel.innerHTML = '<option value="">Seleziona un cliente...</option>' + data.map(function(c){
+    var name = [c.first_name, c.last_name].filter(Boolean).join(" ") || c.company || ("Cliente #" + c.id);
+    return '<option value="' + c.id + '">' + escapeHTML(name) + '</option>';
+  }).join("");
+}
+
+async function loadOpportunities(){
+  const { data, error } = await client.from("opportunities").select("id,title,location,municipality").order("title");
+  allOpportunities = data || [];
+  var list = document.getElementById("oppList");
+  if(error || !allOpportunities.length){
+    list.innerHTML = '<div style="padding:8px;opacity:.6">Nessuna opportunità disponibile.</div>';
+    return;
+  }
+  list.innerHTML = allOpportunities.map(function(o){
+    var loc = [o.municipality, o.location].filter(Boolean).join(" · ");
+    return '<label class="opp-row"><input type="checkbox" class="opp-check" value="' + o.id + '"> ' + escapeHTML(o.title || ("#" + o.id)) + (loc ? ' <span style="opacity:.6">(' + escapeHTML(loc) + ')</span>' : '') + '</label>';
+  }).join("");
+}
+
+async function loadExisting(){
+  if(!editingId) return;
+  document.getElementById("pageTitle").textContent = "Modifica Incarico";
+
+  const { data, error } = await client.from("immonova_listing_mandates").select("*").eq("id", editingId).maybeSingle();
+  if(error || !data){
+    setFormStatus("Impossibile caricare l'incarico richiesto.", "error");
+    return;
+  }
+  document.getElementById("clientId").value = data.client_id;
+  document.getElementById("startDate").value = data.start_date;
+  document.getElementById("durationMonths").value = data.duration_months;
+  document.getElementById("exclusive").value = String(!!data.exclusive);
+  document.getElementById("commissionPercent").value = data.commission_percent ?? "";
+  document.getElementById("autoRenew").checked = !!data.auto_renew;
+  document.getElementById("status").value = data.status || "active";
+  document.getElementById("notes").value = data.notes || "";
+
+  const { data: links } = await client.from("immonova_listing_mandate_opportunities").select("opportunity_id").eq("mandate_id", editingId);
+  var linkedIds = new Set((links || []).map(r => String(r.opportunity_id)));
+  document.querySelectorAll(".opp-check").forEach(function(cb){
+    cb.checked = linkedIds.has(cb.value);
+  });
+}
+
+document.getElementById("saveBtn").addEventListener("click", async function(){
+  var clientId = document.getElementById("clientId").value;
+  var startDate = document.getElementById("startDate").value;
+  var durationMonths = Number(document.getElementById("durationMonths").value);
+  var exclusive = document.getElementById("exclusive").value === "true";
+  var commissionRaw = document.getElementById("commissionPercent").value;
+  var commissionPercent = commissionRaw === "" ? null : Number(commissionRaw);
+  var autoRenew = document.getElementById("autoRenew").checked;
+  var status = document.getElementById("status").value;
+  var notes = document.getElementById("notes").value.trim() || null;
+  var selectedOppIds = Array.from(document.querySelectorAll(".opp-check:checked")).map(cb => Number(cb.value));
+
+  if(!clientId){ setFormStatus("Seleziona un cliente.", "error"); return; }
+  if(!startDate){ setFormStatus("Inserisci la data di inizio.", "error"); return; }
+  if(!durationMonths || durationMonths < 1){ setFormStatus("Inserisci una durata valida in mesi.", "error"); return; }
+
+  setFormStatus("Salvataggio in corso...", "");
+
+  var payload = {
+    client_id: Number(clientId),
+    start_date: startDate,
+    duration_months: durationMonths,
+    exclusive: exclusive,
+    commission_percent: commissionPercent,
+    auto_renew: autoRenew,
+    status: status,
+    notes: notes
+  };
+
+  var mandateId = editingId;
+
+  if(mandateId){
+    const { error } = await client.from("immonova_listing_mandates").update(payload).eq("id", mandateId);
+    if(error){ setFormStatus("Errore: " + error.message, "error"); return; }
+  }else{
+    const { data, error } = await client.from("immonova_listing_mandates").insert(payload).select().single();
+    if(error){ setFormStatus("Errore: " + error.message, "error"); return; }
+    mandateId = data.id;
+  }
+
+  // Risincronizza le opportunità collegate: cancella e reinserisce, più semplice
+  // che calcolare un diff, e questa tabella è piccola per definizione (poche
+  // opportunità per incarico).
+  await client.from("immonova_listing_mandate_opportunities").delete().eq("mandate_id", mandateId);
+  if(selectedOppIds.length){
+    var rows = selectedOppIds.map(oppId => ({ mandate_id: mandateId, opportunity_id: oppId }));
+    const { error: linkError } = await client.from("immonova_listing_mandate_opportunities").insert(rows);
+    if(linkError){
+      setFormStatus("Incarico salvato, ma errore nel collegare le opportunità: " + linkError.message, "error");
+      return;
+    }
+  }
+
+  setFormStatus("Incarico salvato correttamente.", "success");
+  setTimeout(function(){ window.location.href = "listing-mandates.html"; }, 700);
+});
+
+document.getElementById("logoutBtn").addEventListener("click", async () => {
+  await client.auth.signOut();
+  window.location.href = "../index.html";
+});
+
+(async function init(){
+  if(await checkAuth()){
+    await loadSellerClients();
+    await loadOpportunities();
+    await loadExisting();
+  }
+})();
+</script>
+
+</body>
+</html>

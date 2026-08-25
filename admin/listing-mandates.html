@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Incarichi | DOMINUS Admin</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;min-height:100%}
+body{background:var(--page-bg-color,#f4ecdf);font-family:"Avenir Next","Helvetica Neue",Arial,sans-serif;color:var(--text-color,#7f6430)}
+.header{padding:30px 40px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(166,127,52,.12);background:rgba(244,236,223,.72);backdrop-filter:blur(14px);position:sticky;top:0;z-index:10}
+.logo{text-decoration:none;color:var(--primary-color,#a67f34)}
+.logo-main{font-size:24px;font-weight:600;letter-spacing:.35em}
+.header-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.header-actions a,.logout{padding:10px 20px;border:1px solid rgba(166,127,52,.25);background:rgba(255,255,255,.25);cursor:pointer;color:var(--primary-color,#a67f34);text-decoration:none;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+.header-actions a:hover,.logout:hover{background:var(--primary-color,#a67f34);color:#fff}
+.container{max-width:1450px;margin:auto;padding:40px}
+.kicker{font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:#9a793c;margin-bottom:12px}
+.title-row{display:flex;justify-content:space-between;align-items:flex-start;gap:22px;flex-wrap:wrap;margin-bottom:18px}
+.title{font-size:42px;font-weight:200;letter-spacing:.05em;color:var(--primary-color,#a67f34)}
+.subtitle{font-size:15px;line-height:1.8;color:#8f7643;max-width:820px;margin-bottom:28px}
+.primary-link{display:inline-block;padding:14px 22px;border:1px solid rgba(166,127,52,.42);background:var(--primary-color,#a67f34);color:#fffaf0;text-decoration:none;text-transform:uppercase;font-size:11px;letter-spacing:.18em}
+.toolbar{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:28px}
+.search{flex:1;min-width:280px;padding:14px 16px;border:1px solid rgba(166,127,52,.22);background:rgba(255,255,255,.25);color:var(--text-color,#7f6430);outline:none;font-size:14px}
+select.filter{padding:14px 16px;border:1px solid rgba(166,127,52,.22);background:rgba(255,255,255,.25);color:var(--text-color,#7f6430);font-size:13px}
+.status{margin-bottom:22px;min-height:20px;font-size:13px}
+.success{color:#4f7f45}
+.error{color:#9c2f2f}
+.table-wrapper{background:rgba(255,255,255,.20);backdrop-filter:blur(8px);border:1px solid rgba(166,127,52,.15);overflow:auto;box-shadow:0 24px 70px rgba(127,100,48,.07)}
+table{width:100%;border-collapse:collapse;min-width:1100px}
+th{text-align:left;padding:16px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;border-bottom:1px solid rgba(166,127,52,.15);white-space:nowrap}
+td{padding:16px;border-bottom:1px solid rgba(166,127,52,.08);vertical-align:top;font-size:13px;line-height:1.6}
+.badge{display:inline-block;padding:6px 9px;margin:2px 3px 0 0;border:1px solid rgba(166,127,52,.25);font-size:10px;letter-spacing:.08em;text-transform:uppercase;background:rgba(255,255,255,.22);color:var(--primary-color,#a67f34);white-space:nowrap}
+.badge.exclusive{background:rgba(166,127,52,.16);border-color:rgba(166,127,52,.4)}
+.badge.status-expired{border-color:rgba(156,47,47,.3);color:#9c2f2f}
+.badge.status-terminated{border-color:rgba(90,80,60,.3);color:#6b5d3f}
+.badge.status-active{border-color:rgba(79,127,69,.35);color:#4f7f45}
+.actions{display:flex;flex-direction:column;gap:6px;min-width:90px}
+.action-btn{padding:8px 10px;border:1px solid rgba(166,127,52,.28);background:rgba(255,255,255,.20);color:var(--primary-color,#a67f34);cursor:pointer;font-size:10px;letter-spacing:.08em;text-transform:uppercase;font-family:inherit;text-decoration:none;text-align:center}
+.action-btn:hover{background:var(--primary-color,#a67f34);color:#fff}
+.action-btn.danger{border-color:rgba(156,47,47,.35);color:#9c2f2f}
+.action-btn.danger:hover{background:#9c2f2f;color:#fff}
+.empty{padding:40px;text-align:center;opacity:.7}
+@media(max-width:700px){.header{flex-direction:column;gap:18px}.container{padding:28px 22px}}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+<a href="../index.html" class="logo"><div class="logo-main">DOMINUS</div></a>
+<div class="header-actions">
+<a href="dashboard.html">Dashboard</a>
+<a href="investors.html">Investitori</a>
+<button class="logout" id="logoutBtn">Logout</button>
+</div>
+</header>
+
+<div class="container">
+
+<div class="kicker">Mandati di Vendita/Mediazione</div>
+
+<div class="title-row">
+<div><h1 class="title">Incarichi</h1></div>
+<a class="primary-link" href="listing-mandate-form.html">Nuovo Incarico</a>
+</div>
+
+<p class="subtitle">Gli incarichi che ti sono stati conferiti dai tuoi clienti venditori: esclusiva o meno, durata, autorinnovo, provvigione pattuita, e a quali immobili si riferiscono.</p>
+
+<div class="toolbar">
+<input type="text" id="searchInput" class="search" placeholder="Cerca per cliente o note...">
+<select id="statusFilter" class="filter">
+<option value="">Tutti gli stati</option>
+<option value="active">Attivo</option>
+<option value="expired">Scaduto</option>
+<option value="terminated">Risolto</option>
+</select>
+</div>
+
+<div id="status" class="status"></div>
+
+<div class="table-wrapper">
+<table>
+<thead>
+<tr>
+<th>Cliente</th>
+<th>Esclusiva</th>
+<th>Inizio</th>
+<th>Durata</th>
+<th>Scadenza</th>
+<th>Autorinnovo</th>
+<th>Provvigione</th>
+<th>Opportunità collegate</th>
+<th>Stato</th>
+<th>Azioni</th>
+</tr>
+</thead>
+<tbody id="mandatesTable">
+<tr><td colspan="10" class="empty">Caricamento...</td></tr>
+</tbody>
+</table>
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js"></script>
+<script src="../js/theme-loader.js"></script>
+<script src="../js/site-branding.js"></script>
+
+<script>
+const client = window.supabaseClient;
+const table = document.getElementById("mandatesTable");
+const statusBox = document.getElementById("status");
+const searchInput = document.getElementById("searchInput");
+const statusFilter = document.getElementById("statusFilter");
+
+let currentUser = null;
+let allMandates = [];
+let investorsById = {};
+let opportunitiesById = {};
+
+const STATUS_LABELS = { active:"Attivo", expired:"Scaduto", terminated:"Risolto" };
+
+function escapeHTML(value){return String(value??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
+
+function setStatus(message, type){
+  statusBox.className = "status " + (type || "");
+  statusBox.textContent = message || "";
+}
+
+async function checkAuth(){
+  const { data:{ session } } = await client.auth.getSession();
+  if(!session){ window.location.href = "login.html"; return false; }
+  currentUser = session.user;
+  return true;
+}
+
+function formatDateShort(v){
+  if(!v) return "—";
+  try{ return new Date(v).toLocaleDateString("it-IT",{day:"2-digit",month:"2-digit",year:"numeric"}); }
+  catch(e){ return v; }
+}
+
+function computeEndDate(m){
+  if(!m.start_date) return null;
+  var d = new Date(m.start_date + "T00:00:00");
+  d.setMonth(d.getMonth() + (m.duration_months || 0));
+  return d;
+}
+
+function computeEffectiveStatus(m){
+  if(m.status === "terminated") return "terminated";
+  var end = computeEndDate(m);
+  if(end && end.getTime() < Date.now() && !m.auto_renew) return "expired";
+  return "active";
+}
+
+async function loadLookups(){
+  const [invRes, oppRes] = await Promise.all([
+    client.from("investors").select("id,first_name,last_name,company,phone,email"),
+    client.from("opportunities").select("id,title")
+  ]);
+  investorsById = {};
+  (invRes.data || []).forEach(i => { investorsById[i.id] = i; });
+  opportunitiesById = {};
+  (oppRes.data || []).forEach(o => { opportunitiesById[o.id] = o; });
+}
+
+async function loadMandates(){
+  const { data, error } = await client
+    .from("immonova_listing_mandates")
+    .select("*, immonova_listing_mandate_opportunities(opportunity_id)")
+    .order("created_at", { ascending:false });
+
+  if(error){
+    table.innerHTML = '<tr><td colspan="10" class="empty">Errore nel caricamento: ' + escapeHTML(error.message) + '</td></tr>';
+    return;
+  }
+  allMandates = data || [];
+  applyFilter();
+}
+
+function clientLabel(id){
+  var c = investorsById[id];
+  if(!c) return "Cliente #" + id;
+  var name = [c.first_name, c.last_name].filter(Boolean).join(" ") || c.company || ("Cliente #" + id);
+  return name;
+}
+
+function applyFilter(){
+  var query = (searchInput.value || "").trim().toLowerCase();
+  var statusVal = statusFilter.value;
+  var filtered = allMandates.filter(function(m){
+    var effStatus = computeEffectiveStatus(m);
+    if(statusVal && effStatus !== statusVal) return false;
+    if(!query) return true;
+    var hay = (clientLabel(m.client_id) + " " + (m.notes || "")).toLowerCase();
+    return hay.includes(query);
+  });
+  renderTable(filtered);
+}
+
+function renderTable(data){
+  if(!data.length){
+    table.innerHTML = '<tr><td colspan="10" class="empty">Nessun incarico registrato.</td></tr>';
+    return;
+  }
+  table.innerHTML = data.map(function(m){
+    var end = computeEndDate(m);
+    var effStatus = computeEffectiveStatus(m);
+    var oppIds = (m.immonova_listing_mandate_opportunities || []).map(r => r.opportunity_id);
+    var oppLabels = oppIds.map(id => {
+      var o = opportunitiesById[id];
+      return o ? escapeHTML(o.title || ("#" + id)) : ("#" + id);
+    });
+    return '<tr>'
+      + '<td><strong>' + escapeHTML(clientLabel(m.client_id)) + '</strong></td>'
+      + '<td>' + (m.exclusive ? '<span class="badge exclusive">Esclusiva</span>' : '<span class="badge">Non esclusiva</span>') + '</td>'
+      + '<td>' + escapeHTML(formatDateShort(m.start_date)) + '</td>'
+      + '<td>' + escapeHTML(String(m.duration_months || 0)) + ' mesi</td>'
+      + '<td>' + escapeHTML(end ? formatDateShort(end.toISOString().slice(0,10)) : "—") + '</td>'
+      + '<td>' + (m.auto_renew ? 'Sì' : 'No') + '</td>'
+      + '<td>' + (m.commission_percent != null ? escapeHTML(String(m.commission_percent)) + ' %' : "—") + '</td>'
+      + '<td>' + (oppLabels.length ? oppLabels.map(l => '<span class="badge">' + l + '</span>').join("") : '<span class="empty" style="padding:0;opacity:.6">Nessuna</span>') + '</td>'
+      + '<td><span class="badge status-' + effStatus + '">' + escapeHTML(STATUS_LABELS[effStatus]) + '</span></td>'
+      + '<td><div class="actions">'
+        + '<a class="action-btn" href="listing-mandate-form.html?id=' + encodeURIComponent(m.id) + '">Modifica</a>'
+        + '<button type="button" class="action-btn danger" onclick="deleteMandate(' + m.id + ')">Elimina</button>'
+      + '</div></td>'
+      + '</tr>';
+  }).join("");
+}
+
+window.deleteMandate = async function(id){
+  if(!confirm("Eliminare definitivamente questo incarico?")) return;
+  setStatus("Eliminazione in corso...", "");
+  const { error } = await client.from("immonova_listing_mandates").delete().eq("id", id);
+  if(error){ setStatus(error.message, "error"); return; }
+  setStatus("Incarico eliminato.", "success");
+  await loadMandates();
+};
+
+searchInput.addEventListener("input", applyFilter);
+statusFilter.addEventListener("change", applyFilter);
+
+document.getElementById("logoutBtn").addEventListener("click", async () => {
+  await client.auth.signOut();
+  window.location.href = "../index.html";
+});
+
+(async function init(){
+  if(await checkAuth()){
+    await loadLookups();
+    await loadMandates();
+  }
+})();
+</script>
+
+</body>
+</html>
