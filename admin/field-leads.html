@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notizie | DOMINUS Admin</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;min-height:100%}
+body{background:var(--page-bg-color,#f4ecdf);font-family:"Avenir Next","Helvetica Neue",Arial,sans-serif;color:var(--text-color,#7f6430)}
+.header{padding:30px 40px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(166,127,52,.12);background:rgba(244,236,223,.72);backdrop-filter:blur(14px);position:sticky;top:0;z-index:10}
+.logo{text-decoration:none;color:var(--primary-color,#a67f34)}
+.logo-main{font-size:24px;font-weight:600;letter-spacing:.35em}
+.header-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.header-actions a,.logout{padding:10px 20px;border:1px solid rgba(166,127,52,.25);background:rgba(255,255,255,.25);cursor:pointer;color:var(--primary-color,#a67f34);text-decoration:none;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+.header-actions a:hover,.logout:hover{background:var(--primary-color,#a67f34);color:#fff}
+.container{max-width:1450px;margin:auto;padding:40px}
+.kicker{font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:#9a793c;margin-bottom:12px}
+.title-row{display:flex;justify-content:space-between;align-items:flex-start;gap:22px;flex-wrap:wrap;margin-bottom:18px}
+.title{font-size:42px;font-weight:200;letter-spacing:.05em;color:var(--primary-color,#a67f34)}
+.subtitle{font-size:15px;line-height:1.8;color:#8f7643;max-width:820px;margin-bottom:28px}
+.primary-link{display:inline-block;padding:14px 22px;border:1px solid rgba(166,127,52,.42);background:var(--primary-color,#a67f34);color:#fffaf0;text-decoration:none;text-transform:uppercase;font-size:11px;letter-spacing:.18em}
+.toolbar{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:28px}
+.search{flex:1;min-width:280px;padding:14px 16px;border:1px solid rgba(166,127,52,.22);background:rgba(255,255,255,.25);color:var(--text-color,#7f6430);outline:none;font-size:14px}
+select.filter{padding:14px 16px;border:1px solid rgba(166,127,52,.22);background:rgba(255,255,255,.25);color:var(--text-color,#7f6430);font-size:13px}
+.status{margin-bottom:22px;min-height:20px;font-size:13px}
+.success{color:#4f7f45}
+.error{color:#9c2f2f}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px}
+.card{background:rgba(255,255,255,.22);backdrop-filter:blur(8px);border:1px solid rgba(166,127,52,.15);padding:20px;display:flex;flex-direction:column;gap:10px;box-shadow:0 18px 50px rgba(127,100,48,.06)}
+.card.priority-alta{border-left:3px solid #9c2f2f}
+.card.priority-media{border-left:3px solid #a67f34}
+.card.priority-bassa{border-left:3px solid rgba(166,127,52,.3)}
+.card-title{font-size:15px;font-weight:600;color:#5c4a20}
+.card-meta{font-size:11.5px;color:#9a8a63}
+.card-details{font-size:13px;color:#7f6430;line-height:1.5;flex:1}
+.badge{display:inline-block;padding:5px 9px;border:1px solid rgba(166,127,52,.25);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;background:rgba(255,255,255,.3);color:var(--primary-color,#a67f34)}
+.badge.status-da_verificare{border-color:rgba(166,127,52,.3)}
+.badge.status-in_verifica{border-color:rgba(58,110,165,.3);color:#3a6ea5}
+.badge.status-verificata{border-color:rgba(79,127,69,.35);color:#4f7f45}
+.badge.status-scartata{border-color:rgba(156,47,47,.3);color:#9c2f2f;opacity:.7}
+.badge.status-convertita{background:rgba(79,127,69,.14);border-color:rgba(79,127,69,.4);color:#4f7f45}
+.card-badges{display:flex;flex-wrap:wrap;gap:6px}
+.card-actions{display:flex;gap:8px;margin-top:6px}
+.action-btn{padding:8px 10px;border:1px solid rgba(166,127,52,.28);background:rgba(255,255,255,.20);color:var(--primary-color,#a67f34);cursor:pointer;font-size:10px;letter-spacing:.08em;text-transform:uppercase;font-family:inherit;text-decoration:none;text-align:center;flex:1}
+.action-btn:hover{background:var(--primary-color,#a67f34);color:#fff}
+.action-btn.danger{border-color:rgba(156,47,47,.35);color:#9c2f2f}
+.action-btn.danger:hover{background:#9c2f2f;color:#fff}
+.empty{padding:40px;text-align:center;opacity:.7;grid-column:1/-1}
+@media(max-width:700px){.header{flex-direction:column;gap:18px}.container{padding:28px 22px}}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+<a href="../index.html" class="logo"><div class="logo-main">DOMINUS</div></a>
+<div class="header-actions">
+<a href="dashboard.html">Dashboard</a>
+<a href="investors.html">Investitori</a>
+<button class="logout" id="logoutBtn">Logout</button>
+</div>
+</header>
+
+<div class="container">
+
+<div class="kicker">Segnalazioni Informali</div>
+
+<div class="title-row">
+<div><h1 class="title">Notizie</h1></div>
+<a class="primary-link" href="field-lead-form.html">Nuova Notizia</a>
+</div>
+
+<p class="subtitle">Le voci raccolte sul campo — una possibile vendita di cui hai sentito parlare, un contatto da verificare — prima ancora che diventino un cliente o un incarico vero e proprio. Segui ogni notizia finché non si trasforma in qualcosa di concreto, o la scarti se non porta a nulla.</p>
+
+<div class="toolbar">
+<input type="text" id="searchInput" class="search" placeholder="Cerca per titolo, zona, fonte...">
+<select id="statusFilter" class="filter">
+<option value="">Tutti gli stati</option>
+<option value="da_verificare">Da verificare</option>
+<option value="in_verifica">In verifica</option>
+<option value="verificata">Verificata</option>
+<option value="scartata">Scartata</option>
+<option value="convertita">Convertita</option>
+</select>
+<select id="categoryFilter" class="filter">
+<option value="">Tutte le categorie</option>
+<option value="incarico_potenziale">Potenziale incarico</option>
+<option value="richiesta_da_verificare">Richiesta da verificare</option>
+<option value="altro">Altro</option>
+</select>
+</div>
+
+<div id="status" class="status"></div>
+
+<div class="cards" id="leadsCards">
+<div class="empty">Caricamento...</div>
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js"></script>
+<script src="../js/theme-loader.js"></script>
+<script src="../js/site-branding.js"></script>
+
+<script>
+const client = window.supabaseClient;
+const cardsEl = document.getElementById("leadsCards");
+const statusBox = document.getElementById("status");
+const searchInput = document.getElementById("searchInput");
+const statusFilter = document.getElementById("statusFilter");
+const categoryFilter = document.getElementById("categoryFilter");
+
+let currentUser = null;
+let allLeads = [];
+
+const STATUS_LABELS = { da_verificare:"Da verificare", in_verifica:"In verifica", verificata:"Verificata", scartata:"Scartata", convertita:"Convertita" };
+const CATEGORY_LABELS = { incarico_potenziale:"Potenziale incarico", richiesta_da_verificare:"Richiesta da verificare", altro:"Altro" };
+const PRIORITY_LABELS = { alta:"Priorità alta", media:"Priorità media", bassa:"Priorità bassa" };
+
+function escapeHTML(value){return String(value??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
+
+function setStatus(message, type){
+  statusBox.className = "status " + (type || "");
+  statusBox.textContent = message || "";
+}
+
+async function checkAuth(){
+  const { data:{ session } } = await client.auth.getSession();
+  if(!session){ window.location.href = "login.html"; return false; }
+  currentUser = session.user;
+  return true;
+}
+
+function formatDateShort(v){
+  if(!v) return "";
+  try{ return new Date(v).toLocaleDateString("it-IT",{day:"2-digit",month:"2-digit",year:"numeric"}); }
+  catch(e){ return v; }
+}
+
+async function loadLeads(){
+  const { data, error } = await client.from("immonova_field_leads").select("*").order("created_at",{ascending:false});
+  if(error){
+    cardsEl.innerHTML = '<div class="empty">Errore nel caricamento: ' + escapeHTML(error.message) + '</div>';
+    return;
+  }
+  allLeads = data || [];
+  applyFilter();
+}
+
+function applyFilter(){
+  var query = (searchInput.value || "").trim().toLowerCase();
+  var statusVal = statusFilter.value;
+  var categoryVal = categoryFilter.value;
+  var filtered = allLeads.filter(function(l){
+    if(statusVal && l.status !== statusVal) return false;
+    if(categoryVal && l.category !== categoryVal) return false;
+    if(!query) return true;
+    var hay = [l.title, l.location, l.source_name, l.details].filter(Boolean).join(" ").toLowerCase();
+    return hay.includes(query);
+  });
+  renderCards(filtered);
+}
+
+function renderCards(data){
+  if(!data.length){
+    cardsEl.innerHTML = '<div class="empty">Nessuna notizia registrata.</div>';
+    return;
+  }
+  cardsEl.innerHTML = data.map(function(l){
+    var meta = [l.location, l.source_name ? ("da " + l.source_name) : null, formatDateShort(l.created_at)].filter(Boolean).join(" · ");
+    return '<div class="card priority-' + escapeHTML(l.priority || "media") + '">'
+      + '<div class="card-title">' + escapeHTML(l.title) + '</div>'
+      + '<div class="card-meta">' + escapeHTML(meta) + '</div>'
+      + (l.details ? '<div class="card-details">' + escapeHTML(l.details) + '</div>' : '')
+      + '<div class="card-badges">'
+        + '<span class="badge status-' + escapeHTML(l.status) + '">' + escapeHTML(STATUS_LABELS[l.status] || l.status) + '</span>'
+        + '<span class="badge">' + escapeHTML(CATEGORY_LABELS[l.category] || l.category) + '</span>'
+        + (l.follow_up_date ? '<span class="badge">Richiamare: ' + escapeHTML(formatDateShort(l.follow_up_date)) + '</span>' : '')
+      + '</div>'
+      + '<div class="card-actions">'
+        + '<a class="action-btn" href="field-lead-form.html?id=' + encodeURIComponent(l.id) + '">Apri</a>'
+        + '<button type="button" class="action-btn danger" onclick="deleteLead(' + l.id + ')">Elimina</button>'
+      + '</div>'
+      + '</div>';
+  }).join("");
+}
+
+window.deleteLead = async function(id){
+  if(!confirm("Eliminare definitivamente questa notizia?")) return;
+  setStatus("Eliminazione in corso...", "");
+  const { error } = await client.from("immonova_field_leads").delete().eq("id", id);
+  if(error){ setStatus(error.message, "error"); return; }
+  setStatus("Notizia eliminata.", "success");
+  await loadLeads();
+};
+
+searchInput.addEventListener("input", applyFilter);
+statusFilter.addEventListener("change", applyFilter);
+categoryFilter.addEventListener("change", applyFilter);
+
+document.getElementById("logoutBtn").addEventListener("click", async () => {
+  await client.auth.signOut();
+  window.location.href = "../index.html";
+});
+
+(async function init(){
+  if(await checkAuth()){
+    await loadLeads();
+  }
+})();
+</script>
+
+</body>
+</html>

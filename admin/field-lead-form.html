@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Notizia | DOMINUS Admin</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;min-height:100%}
+body{background:var(--page-bg-color,#f4ecdf);font-family:"Avenir Next","Helvetica Neue",Arial,sans-serif;color:var(--text-color,#7f6430)}
+.header{padding:30px 40px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(166,127,52,.12);background:rgba(244,236,223,.72);backdrop-filter:blur(14px);position:sticky;top:0;z-index:10}
+.logo{text-decoration:none;color:var(--primary-color,#a67f34)}
+.logo-main{font-size:24px;font-weight:600;letter-spacing:.35em}
+.header-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.header-actions a,.logout{padding:10px 20px;border:1px solid rgba(166,127,52,.25);background:rgba(255,255,255,.25);cursor:pointer;color:var(--primary-color,#a67f34);text-decoration:none;font-size:12px;letter-spacing:.14em;text-transform:uppercase}
+.header-actions a:hover,.logout:hover{background:var(--primary-color,#a67f34);color:#fff}
+.container{max-width:820px;margin:auto;padding:40px}
+.kicker{font-size:11px;letter-spacing:.32em;text-transform:uppercase;color:#9a793c;margin-bottom:12px}
+.title{font-size:36px;font-weight:200;letter-spacing:.05em;color:var(--primary-color,#a67f34);margin-bottom:26px}
+.panel{background:rgba(255,255,255,.20);backdrop-filter:blur(8px);border:1px solid rgba(166,127,52,.15);padding:30px;box-shadow:0 24px 70px rgba(127,100,48,.07)}
+.section-title{font-size:16px;font-weight:400;letter-spacing:.08em;text-transform:uppercase;color:var(--primary-color,#a67f34);margin:26px 0 14px;padding-bottom:8px;border-bottom:1px solid rgba(166,127,52,.15)}
+.section-title:first-child{margin-top:0}
+.field{margin-bottom:16px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#8f7643;margin-bottom:6px}
+input,select,textarea{width:100%;padding:11px 12px;border:1px solid rgba(166,127,52,.25);background:rgba(255,255,255,.5);color:var(--text-color,#7f6430);font-family:inherit;font-size:13.5px}
+textarea{min-height:90px;resize:vertical}
+.hint{font-size:11.5px;color:#9a8a63;margin-top:-8px;margin-bottom:16px;line-height:1.5}
+.convert-box{border:1px dashed rgba(166,127,52,.4);padding:16px;margin-top:8px;background:rgba(255,255,255,.25)}
+.convert-box p{font-size:12.5px;color:#8f7643;margin-bottom:12px;line-height:1.6}
+.actions-row{display:flex;gap:12px;margin-top:26px;align-items:center;flex-wrap:wrap}
+button.primary{padding:13px 24px;border:1px solid var(--primary-color,#a67f34);background:var(--primary-color,#a67f34);color:#fff;cursor:pointer;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-family:inherit}
+button.secondary{padding:13px 20px;border:1px solid rgba(166,127,52,.3);background:transparent;color:var(--primary-color,#a67f34);cursor:pointer;font-size:12px;letter-spacing:.08em;text-transform:uppercase;font-family:inherit}
+a.secondary-link{padding:13px 20px;border:1px solid rgba(166,127,52,.3);color:var(--primary-color,#a67f34);text-decoration:none;font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.form-status{font-size:13px;min-height:18px}
+.success{color:#4f7f45}
+.error{color:#9c2f2f}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+<a href="../index.html" class="logo"><div class="logo-main">DOMINUS</div></a>
+<div class="header-actions">
+<a href="dashboard.html">Dashboard</a>
+<a href="field-leads.html">Notizie</a>
+<button class="logout" id="logoutBtn">Logout</button>
+</div>
+</header>
+
+<div class="container">
+
+<div class="kicker">Segnalazione Informale</div>
+<h1 class="title" id="pageTitle">Nuova Notizia</h1>
+
+<div class="panel">
+
+<div class="section-title">La notizia</div>
+<div class="field">
+<label>Titolo</label>
+<input type="text" id="title" placeholder="Es. Villa in vendita a Ostuni, sentito al bar dal geometra" required>
+</div>
+<div class="field">
+<label>Dettagli</label>
+<textarea id="details" placeholder="Tutto quello che sai finora: cosa hai sentito, da chi, quando, che immobile potrebbe essere..."></textarea>
+</div>
+<div class="row">
+<div class="field">
+<label>Zona / Località</label>
+<input type="text" id="location" placeholder="Es. Ostuni, centro storico">
+</div>
+<div class="field">
+<label>Categoria</label>
+<select id="category">
+<option value="incarico_potenziale">Potenziale incarico</option>
+<option value="richiesta_da_verificare">Richiesta da verificare</option>
+<option value="altro">Altro</option>
+</select>
+</div>
+</div>
+
+<div class="section-title">Fonte</div>
+<div class="row">
+<div class="field">
+<label>Chi te l'ha riferita (nome)</label>
+<input type="text" id="sourceName" placeholder="Es. Mario, il geometra">
+</div>
+<div class="field">
+<label>Contatto della fonte (opzionale)</label>
+<input type="text" id="sourceContact" placeholder="Telefono o altro riferimento">
+</div>
+</div>
+
+<div class="section-title">Seguito</div>
+<div class="row">
+<div class="field">
+<label>Stato</label>
+<select id="status">
+<option value="da_verificare">Da verificare</option>
+<option value="in_verifica">In verifica</option>
+<option value="verificata">Verificata</option>
+<option value="scartata">Scartata</option>
+<option value="convertita">Convertita</option>
+</select>
+</div>
+<div class="field">
+<label>Priorità</label>
+<select id="priority">
+<option value="alta">Alta</option>
+<option value="media" selected>Media</option>
+<option value="bassa">Bassa</option>
+</select>
+</div>
+</div>
+<div class="field">
+<label>Data promemoria per richiamare/verificare (opzionale)</label>
+<input type="date" id="followUpDate">
+</div>
+
+<div class="convert-box">
+<p>Se questa notizia si è trasformata in qualcosa di concreto, puoi collegarla qui a un cliente già registrato e, se è nato un vero incarico, anche all'incarico corrispondente. Non è obbligatorio: puoi anche lasciarla così finché non hai novità.</p>
+<div class="row">
+<div class="field">
+<label>Cliente collegato (opzionale)</label>
+<select id="linkedClientId"><option value="">Nessuno</option></select>
+</div>
+<div class="field">
+<label>Incarico collegato (opzionale)</label>
+<select id="linkedMandateId"><option value="">Nessuno</option></select>
+</div>
+</div>
+</div>
+
+<div class="section-title">Note</div>
+<div class="field">
+<label>Note interne (opzionali)</label>
+<textarea id="notes" placeholder="Aggiornamenti, tentativi di contatto, promemoria..."></textarea>
+</div>
+
+<div class="actions-row">
+<button type="button" class="primary" id="saveBtn">Salva Notizia</button>
+<a class="secondary-link" href="field-leads.html">Annulla</a>
+</div>
+<div class="form-status" id="formStatus"></div>
+
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js"></script>
+<script src="../js/theme-loader.js"></script>
+<script src="../js/site-branding.js"></script>
+
+<script>
+const client = window.supabaseClient;
+let currentUser = null;
+let editingId = null;
+
+const params = new URLSearchParams(window.location.search);
+editingId = params.get("id");
+
+function escapeHTML(value){return String(value??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
+
+function setFormStatus(msg, type){
+  var el = document.getElementById("formStatus");
+  el.className = "form-status " + (type || "");
+  el.textContent = msg || "";
+}
+
+async function checkAuth(){
+  const { data:{ session } } = await client.auth.getSession();
+  if(!session){ window.location.href = "login.html"; return false; }
+  currentUser = session.user;
+  return true;
+}
+
+async function loadClients(){
+  const { data } = await client.from("investors").select("id,first_name,last_name,company").order("first_name");
+  var sel = document.getElementById("linkedClientId");
+  sel.innerHTML = '<option value="">Nessuno</option>' + (data || []).map(function(c){
+    var name = [c.first_name, c.last_name].filter(Boolean).join(" ") || c.company || ("Cliente #" + c.id);
+    return '<option value="' + c.id + '">' + escapeHTML(name) + '</option>';
+  }).join("");
+}
+
+async function loadMandates(){
+  const { data } = await client.from("immonova_listing_mandates").select("id,client_id,start_date").order("created_at",{ascending:false});
+  var sel = document.getElementById("linkedMandateId");
+  sel.innerHTML = '<option value="">Nessuno</option>' + (data || []).map(function(m){
+    return '<option value="' + m.id + '">Incarico #' + m.id + ' (dal ' + escapeHTML(m.start_date || "") + ')</option>';
+  }).join("");
+}
+
+async function loadExisting(){
+  if(!editingId) return;
+  document.getElementById("pageTitle").textContent = "Modifica Notizia";
+
+  const { data, error } = await client.from("immonova_field_leads").select("*").eq("id", editingId).maybeSingle();
+  if(error || !data){
+    setFormStatus("Impossibile caricare la notizia richiesta.", "error");
+    return;
+  }
+  document.getElementById("title").value = data.title || "";
+  document.getElementById("details").value = data.details || "";
+  document.getElementById("location").value = data.location || "";
+  document.getElementById("category").value = data.category || "incarico_potenziale";
+  document.getElementById("sourceName").value = data.source_name || "";
+  document.getElementById("sourceContact").value = data.source_contact || "";
+  document.getElementById("status").value = data.status || "da_verificare";
+  document.getElementById("priority").value = data.priority || "media";
+  document.getElementById("followUpDate").value = data.follow_up_date || "";
+  document.getElementById("linkedClientId").value = data.linked_client_id || "";
+  document.getElementById("linkedMandateId").value = data.linked_mandate_id || "";
+  document.getElementById("notes").value = data.notes || "";
+}
+
+document.getElementById("saveBtn").addEventListener("click", async function(){
+  var title = document.getElementById("title").value.trim();
+  if(!title){ setFormStatus("Inserisci almeno un titolo per la notizia.", "error"); return; }
+
+  setFormStatus("Salvataggio in corso...", "");
+
+  var payload = {
+    title: title,
+    details: document.getElementById("details").value.trim() || null,
+    location: document.getElementById("location").value.trim() || null,
+    category: document.getElementById("category").value,
+    source_name: document.getElementById("sourceName").value.trim() || null,
+    source_contact: document.getElementById("sourceContact").value.trim() || null,
+    status: document.getElementById("status").value,
+    priority: document.getElementById("priority").value,
+    follow_up_date: document.getElementById("followUpDate").value || null,
+    linked_client_id: document.getElementById("linkedClientId").value || null,
+    linked_mandate_id: document.getElementById("linkedMandateId").value || null,
+    notes: document.getElementById("notes").value.trim() || null
+  };
+
+  var result = editingId
+    ? await client.from("immonova_field_leads").update(payload).eq("id", editingId)
+    : await client.from("immonova_field_leads").insert(payload);
+
+  if(result.error){ setFormStatus("Errore: " + result.error.message, "error"); return; }
+
+  setFormStatus("Notizia salvata correttamente.", "success");
+  setTimeout(function(){ window.location.href = "field-leads.html"; }, 700);
+});
+
+document.getElementById("logoutBtn").addEventListener("click", async () => {
+  await client.auth.signOut();
+  window.location.href = "../index.html";
+});
+
+(async function init(){
+  if(await checkAuth()){
+    await loadClients();
+    await loadMandates();
+    await loadExisting();
+  }
+})();
+</script>
+
+</body>
+</html>
