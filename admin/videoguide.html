@@ -56,7 +56,10 @@ body{background:var(--page-bg-color,#f4ecdf);font-family:var(--font-family,"Aven
 
 <div class="modal-backdrop" id="videoModal">
   <button class="modal-close" onclick="closeVideoModal()">&times;</button>
-  <div class="modal-video"><video id="modalVideoPlayer" controls></video></div>
+  <div class="modal-video">
+    <video id="modalVideoPlayer" controls></video>
+    <iframe id="modalVideoFrame" style="display:none;width:100%;aspect-ratio:16/9;border:0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+  </div>
 </div>
 
 <script>
@@ -67,7 +70,7 @@ body{background:var(--page-bg-color,#f4ecdf);font-family:var(--font-family,"Aven
    ============================================================================ */
 const CATALOG = [
   { package: "Base", items: [
-    { title: "Opportunità — gestire gli immobili", desc: "Come aggiungere, filtrare e seguire ogni immobile in portafoglio.", duration: "4-5 min", src: "" },
+    { title: "Opportunità — gestire gli immobili", desc: "Come aggiungere, filtrare e seguire ogni immobile in portafoglio.", duration: "4-5 min", src: "https://youtu.be/3kvDUfgZIwg" },
     { title: "Clienti — Investitori e Venditori", desc: "Come classificare un cliente come investitore, venditore o entrambi.", duration: "4 min", src: "" },
     { title: "Statistiche", desc: "Il quadro generale del portafoglio a colpo d'occhio.", duration: "2-3 min", src: "" },
   ]},
@@ -120,6 +123,18 @@ const CATALOG = [
 
 function esc(v){ return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 
+/* Riconosce un link YouTube (youtu.be/ID o youtube.com/watch?v=ID) e lo
+   trasforma nell'URL "embed" che serve per farlo suonare dentro l'iframe
+   della modale. Se non è YouTube, torna null e si usa il player video normale
+   (per i file .mp4 caricati direttamente). */
+function youtubeEmbedUrl(src){
+  const short = src.match(/youtu\.be\/([a-zA-Z0-9_-]+)/);
+  if(short) return `https://www.youtube-nocookie.com/embed/${short[1]}`;
+  const long = src.match(/[?&]v=([a-zA-Z0-9_-]+)/);
+  if(long) return `https://www.youtube-nocookie.com/embed/${long[1]}`;
+  return null;
+}
+
 function render(activePackage){
   const container = document.getElementById("catalogContainer");
   container.innerHTML = CATALOG
@@ -163,16 +178,28 @@ window.setFilter = function(pkg, btn){
 window.playVideo = function(src){
   const modal = document.getElementById("videoModal");
   const player = document.getElementById("modalVideoPlayer");
-  player.src = src;
+  const frame = document.getElementById("modalVideoFrame");
+  const embedUrl = youtubeEmbedUrl(src);
+  if(embedUrl){
+    player.pause(); player.style.display = "none"; player.src = "";
+    frame.style.display = "block";
+    frame.src = embedUrl + "?autoplay=1&rel=0";
+  }else{
+    frame.style.display = "none"; frame.src = "";
+    player.style.display = "block";
+    player.src = src;
+    player.play();
+  }
   modal.classList.add("open");
-  player.play();
 };
 
 window.closeVideoModal = function(){
   const modal = document.getElementById("videoModal");
   const player = document.getElementById("modalVideoPlayer");
+  const frame = document.getElementById("modalVideoFrame");
   player.pause();
   player.src = "";
+  frame.src = "";
   modal.classList.remove("open");
 };
 
