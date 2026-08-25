@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Impostazioni Sito | DOMINUS Admin</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:100%;min-height:100%}
+body{background:var(--page-bg-color,#f4ecdf);font-family:"Avenir Next","Helvetica Neue",Arial,sans-serif;color:var(--text-color,#7f6430)}
+
+.header{padding:24px 40px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(166,127,52,.12);background:rgba(244,236,223,.72);backdrop-filter:blur(14px);position:sticky;top:0;z-index:10}
+.logo{font-size:22px;font-weight:300;letter-spacing:.32em;color:var(--primary-color,#a67f34);text-decoration:none}
+.header-actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.header-actions a,.logout{padding:10px 18px;border:1px solid rgba(166,127,52,.25);background:rgba(255,255,255,.25);cursor:pointer;color:var(--primary-color,#a67f34);text-decoration:none;font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-family:inherit}
+.header-actions a:hover,.logout:hover{background:var(--primary-color,#a67f34);color:#fff}
+
+.layout{max-width:1200px;margin:0 auto;padding:40px 32px 80px;display:grid;grid-template-columns:220px 1fr;gap:32px;align-items:start}
+.title{font-size:36px;font-weight:200;letter-spacing:.05em;color:var(--primary-color,#a67f34);margin-bottom:8px;grid-column:1/-1}
+.subtitle{font-size:13.5px;line-height:1.7;color:#8f7643;max-width:760px;margin-bottom:8px;grid-column:1/-1}
+
+.tabs{display:flex;flex-direction:column;gap:6px;position:sticky;top:100px}
+.tab-btn{text-align:left;padding:14px 16px;border:1px solid rgba(166,127,52,.2);background:rgba(255,255,255,.2);color:var(--primary-color,#a67f34);cursor:pointer;font-size:12px;letter-spacing:.1em;text-transform:uppercase;font-family:inherit}
+.tab-btn.active{background:var(--primary-color,#a67f34);color:#fff}
+
+.panel{display:none}
+.panel.active{display:block}
+.section{background:rgba(255,255,255,.22);border:1px solid rgba(166,127,52,.15);padding:26px 28px;margin-bottom:24px}
+.section-title{font-size:16px;color:var(--primary-color,#a67f34);letter-spacing:.03em;margin-bottom:18px}
+.field{margin-bottom:16px}
+label{display:block;margin-bottom:7px;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8f7643}
+input,select{width:100%;padding:12px 14px;border:1px solid rgba(166,127,52,.25);background:rgba(255,255,255,.35);color:var(--text-color,#7f6430);font-size:14px;font-family:inherit;outline:none}
+input[type="checkbox"]{width:auto}
+
+.btn{padding:12px 20px;background:var(--primary-color,#a67f34);color:#fff;border:1px solid var(--primary-color,#a67f34);text-transform:uppercase;letter-spacing:.12em;font-size:11px;cursor:pointer;font-family:inherit}
+.btn:hover{background:var(--secondary-color,#8a682c)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn.secondary{background:rgba(255,255,255,.22);color:var(--primary-color,#a67f34)}
+.btn.danger{background:#fff;color:#9c2f2f;border-color:rgba(156,47,47,.35)}
+.btn.small{padding:8px 14px;font-size:10px}
+
+.logo-preview{max-height:60px;max-width:260px;display:block;margin-bottom:14px;background:rgba(255,255,255,.4);padding:8px}
+.logo-preview-empty{font-size:12px;color:#8f7643;margin-bottom:14px}
+
+.row-list{display:flex;flex-direction:column;gap:10px;margin-bottom:16px}
+.row-item{display:flex;gap:10px;align-items:flex-end;flex-wrap:wrap;padding:14px;background:rgba(255,255,255,.28);border:1px solid rgba(166,127,52,.12)}
+.row-item .field{flex:1;min-width:160px;margin-bottom:0}
+.row-item .check-field{display:flex;align-items:center;gap:8px;font-size:11px;color:#8f7643;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
+.row-item .check-field input{width:auto}
+.phones-block{margin-top:12px;padding-top:12px;border-top:1px dashed rgba(166,127,52,.25);width:100%}
+.phones-block-title{font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#8f7643;margin-bottom:8px}
+
+.switch{position:relative;width:44px;height:24px;display:inline-block;vertical-align:middle;margin-right:10px}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;cursor:pointer;inset:0;background:rgba(166,127,52,.25);transition:.2s;border-radius:24px}
+.slider:before{position:absolute;content:"";height:18px;width:18px;left:3px;bottom:3px;background:#fff;transition:.2s;border-radius:50%}
+input:checked + .slider{background:var(--primary-color,#a67f34)}
+input:checked + .slider:before{transform:translateX(20px)}
+.portal-card{background:rgba(255,255,255,.25);border:1px solid rgba(166,127,52,.15);padding:22px 26px;margin-bottom:20px}
+.portal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.portal-title{font-size:16px;color:var(--primary-color,#a67f34)}
+.portal-status{font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;padding:2px 9px;border-radius:10px}
+.portal-status.attivo{background:rgba(79,127,69,.15);color:#4f7f45}
+.portal-status.non-attivo{background:rgba(120,120,120,.12);color:#666}
+.portal-desc{font-size:12px;color:#9a8a63;margin-bottom:16px}
+.note{background:rgba(166,127,52,.08);border-left:3px solid var(--primary-color,#a67f34);padding:14px 18px;font-size:12.5px;line-height:1.7;color:#7f6430;margin-bottom:22px}
+.log-table{width:100%;border-collapse:collapse;margin-top:10px}
+.log-table th,.log-table td{padding:8px 10px;text-align:left;font-size:12px;border-bottom:1px solid rgba(166,127,52,.1)}
+.log-table th{font-size:10px;text-transform:uppercase;color:#8f7643}
+.log-successo{color:#4f7f45}
+.log-errore{color:#9c2f2f}
+
+.status{margin-top:10px;font-size:13px;min-height:18px}
+.success{color:#4f7f45}
+.error{color:#9c2f2f}
+#accessDenied{display:none}
+
+@media(max-width:820px){.layout{grid-template-columns:1fr}.tabs{position:static;flex-direction:row;flex-wrap:wrap}}
+</style>
+</head>
+
+<body>
+
+<header class="header">
+<a href="dashboard.html" class="logo">DOMINUS</a>
+<div class="header-actions">
+<a href="dashboard.html">Dashboard</a>
+<button class="logout" id="logoutBtn">Logout</button>
+</div>
+</header>
+
+<div id="accessDenied" class="status error" style="margin:40px">Solo un amministratore può accedere a questa pagina.</div>
+
+<div class="layout" id="mainContent" style="display:none">
+<h1 class="title">Impostazioni Sito</h1>
+<p class="subtitle">Un unico posto per configurare tutto: aspetto del sito, calendari personali, link social e portali immobiliari. Ogni scheda si salva separatamente.</p>
+
+<nav class="tabs">
+<button type="button" class="tab-btn active" data-tab="sito">Sito</button>
+<button type="button" class="tab-btn" data-tab="calendari">Calendari</button>
+<button type="button" class="tab-btn" data-tab="social">Social</button>
+<button type="button" class="tab-btn" data-tab="portali">Portali Immobiliari</button>
+</nav>
+
+<div>
+
+<!-- ============ PANNELLO: SITO (logo, tracciamento, contatti) ============ -->
+<div class="panel active" id="panel-sito">
+
+<div class="section">
+<div class="section-title">Logo</div>
+<img id="logoPreview" class="logo-preview" style="display:none">
+<div id="logoPreviewEmpty" class="logo-preview-empty">Nessun logo caricato — le pagine mostrano il testo "DOMINUS".</div>
+<div class="field"><label>Nome azienda (usato come testo alternativo dell'immagine)</label><input type="text" id="companyName" placeholder="DOMINUS"></div>
+<div class="field"><label>Carica nuovo logo (PNG o SVG con sfondo trasparente consigliato)</label><input type="file" id="logoFile" accept="image/png,image/svg+xml,image/jpeg,image/webp"></div>
+<button type="button" class="btn" id="saveLogoBtn">Salva logo</button>
+<div id="logoStatus" class="status"></div>
+</div>
+
+<div class="section">
+<div class="section-title">Tracciamento (Meta Pixel / Google Analytics)</div>
+<div class="field"><label>Meta Pixel ID</label><input type="text" id="metaPixelId" placeholder="Es. 1748507966184581"></div>
+<div class="field"><label>Google Analytics — Measurement ID</label><input type="text" id="gaMeasurementId" placeholder="Es. G-XXXXXXXXXX"></div>
+<button type="button" class="btn" id="saveAnalyticsBtn">Salva tracciamento</button>
+<div id="analyticsStatus" class="status"></div>
+</div>
+
+<div class="section">
+<div class="section-title">Email di contatto</div>
+<div class="row-list" id="emailsList"></div>
+<button type="button" class="btn secondary small" id="addEmailBtn">+ Aggiungi email</button>
+<button type="button" class="btn small" id="saveEmailsBtn" style="margin-left:8px">Salva email</button>
+<div id="emailsStatus" class="status"></div>
+</div>
+
+<div class="section">
+<div class="section-title">Indirizzi e telefoni</div>
+<div class="row-list" id="addressesList"></div>
+<button type="button" class="btn secondary small" id="addAddressBtn">+ Aggiungi indirizzo</button>
+<button type="button" class="btn small" id="saveAddressesBtn" style="margin-left:8px">Salva indirizzi e telefoni</button>
+<div id="addressesStatus" class="status"></div>
+</div>
+
+</div>
+
+<!-- ============ PANNELLO: CALENDARI ============ -->
+<div class="panel" id="panel-calendari">
+<div class="section">
+<div class="section-title">Collega il tuo calendario personale</div>
+<div id="connectionsStatus" style="font-size:12px;margin-bottom:14px"></div>
+
+<div style="display:flex;flex-direction:column;gap:10px;max-width:420px;margin-bottom:24px">
+<div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8f7643">iCloud</div>
+<div id="icloudConnectionStatus" style="font-size:12px"></div>
+<div id="icloudConnectForm" style="display:flex;flex-direction:column;gap:10px">
+<input type="email" id="icloudUsername" placeholder="nome@icloud.com">
+<input type="password" id="icloudAppPassword" placeholder="Password per app (appleid.apple.com)">
+<div style="display:flex;gap:10px">
+<button type="button" class="btn secondary" id="connectIcloudBtn">Collega iCloud</button>
+<button type="button" class="btn danger" id="disconnectIcloudBtn" style="display:none">Scollega</button>
+</div>
+</div>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:10px;max-width:420px">
+<div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#8f7643">Google Calendar</div>
+<div id="googleConnectionStatus" style="font-size:12px"></div>
+<div style="display:flex;gap:10px">
+<button type="button" class="btn secondary" id="connectGoogleBtn">Collega Google Calendar</button>
+<button type="button" class="btn danger" id="disconnectGoogleBtn" style="display:none">Scollega</button>
+</div>
+</div>
+
+<p style="margin-top:20px;font-size:12px;color:#8f7643">Per gestire eventi ed appuntamenti vai alla <a href="calendar.html" style="color:var(--primary-color,#a67f34)">pagina Calendario</a> — qui colleghi solo il tuo account personale.</p>
+</div>
+</div>
+
+<!-- ============ PANNELLO: SOCIAL ============ -->
+<div class="panel" id="panel-social">
+<div class="section">
+<div class="section-title">Link social pubblici</div>
+<p style="font-size:12.5px;color:#8f7643;margin-bottom:18px">Lascia un campo vuoto per nascondere quell'icona invece di mostrarla vuota. Compaiono nell'header del sito pubblico.</p>
+<div class="field"><label for="instagram_url">Instagram</label><input type="url" id="instagram_url" placeholder="https://instagram.com/tuoprofilo"></div>
+<div class="field"><label for="facebook_url">Facebook</label><input type="url" id="facebook_url" placeholder="https://facebook.com/tuapagina"></div>
+<div class="field"><label for="linkedin_url">LinkedIn</label><input type="url" id="linkedin_url" placeholder="https://linkedin.com/company/tuaazienda"></div>
+<button type="button" class="btn" id="saveSocialBtn">Salva link social</button>
+<div id="socialStatus" class="status"></div>
+</div>
+</div>
+
+<!-- ============ PANNELLO: PORTALI IMMOBILIARI ============ -->
+<div class="panel" id="panel-portali">
+<div class="note"><strong>Nota su Subito.it:</strong> non serve un'integrazione separata. Da aprile 2026, gli annunci pubblicati su Immobiliare.it vengono ripubblicati automaticamente anche su Subito, in 9 regioni. Attivando Immobiliare.it qui sotto, copri anche Subito in quelle regioni.</div>
+
+<div class="portal-card">
+<div class="portal-head"><div class="portal-title">Immobiliare.it <span style="font-size:11px;color:#9a8a63">(copre anche Subito.it)</span></div><span class="portal-status" id="statusImmobiliare">—</span></div>
+<p class="portal-desc">Richiede username, password ed endpoint forniti dal supporto Immobiliare.it dopo l'attivazione del contratto agenzia.</p>
+<label class="switch"><input type="checkbox" id="enabledImmobiliare"><span class="slider"></span></label>
+<span style="font-size:12px">Attiva pubblicazione</span>
+<div class="field" style="margin-top:14px"><label>Username</label><input id="immUsername"></div>
+<div class="field"><label>Password</label><input id="immPassword" type="password"></div>
+<div class="field"><label>Endpoint API (fornito da Immobiliare.it)</label><input id="immEndpoint" placeholder="https://..."></div>
+<div class="field"><label>X-IMMO-SOURCE</label><input id="immSourceId"></div>
+<div class="field"><label>Email agenzia (contatto annunci)</label><input id="immAgencyEmail" type="email"></div>
+<button class="btn" id="saveImmBtn">Salva</button>
+<div id="statusImm" class="status"></div>
+</div>
+
+<div class="portal-card">
+<div class="portal-head"><div class="portal-title">Idealista</div><span class="portal-status" id="statusIdealista">—</span></div>
+<p class="portal-desc">Idealista non ha un'API self-service: bisogna richiedere l'attivazione al loro supporto tecnico, che fornisce le credenziali specifiche per l'agenzia. Finché non le hai, lascia questa sezione disattivata.</p>
+<label class="switch"><input type="checkbox" id="enabledIdealista"><span class="slider"></span></label>
+<span style="font-size:12px">Attiva pubblicazione (quando disponibile)</span>
+<div class="field" style="margin-top:14px"><label>Credenziali (JSON fornito da Idealista)</label><input id="ideCredentials" placeholder='{"api_key":"...", "api_secret":"..."}'></div>
+<button class="btn" id="saveIdeBtn">Salva</button>
+<div id="statusIde" class="status"></div>
+</div>
+
+<h3 style="margin:26px 0 10px;color:var(--primary-color,#a67f34);font-weight:400;font-size:16px">Ultime pubblicazioni</h3>
+<table class="log-table"><thead><tr><th>Opportunità</th><th>Portale</th><th>Esito</th><th>Quando</th></tr></thead><tbody id="logBody"></tbody></table>
+</div>
+
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../js/config.js"></script>
+<script src="../js/theme-loader.js"></script>
+<script src="../js/site-branding.js"></script>
+
+<script>
+const client = window.supabaseClient;
+let currentUser = null;
+let emails = [], addresses = [], phones = [];
+
+function escapeHTML(value){return String(value??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;")}
+function showStatus(elId, message, type){var el=document.getElementById(elId);el.className="status "+(type||"");el.textContent=message||""}
+async function extractEdgeFunctionErrorMessage(error){
+  try{
+    if(error && error.context && typeof error.context.text==="function"){
+      var raw=await error.context.text();
+      try{ var parsed=JSON.parse(raw); return parsed.error||parsed.message||raw||error.message; }
+      catch(parseErr){ return raw||error.message; }
+    }
+  }catch(e){}
+  return (error&&error.message)||String(error);
+}
+
+/* ---- Tab ---- */
+document.querySelectorAll(".tab-btn").forEach(function(btn){
+  btn.addEventListener("click", function(){
+    document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+    document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById("panel-"+btn.dataset.tab).classList.add("active");
+  });
+});
+
+/* ---- Auth: solo admin del proprio tenant ---- */
+async function checkAuthAdmin(){
+  const { data:{ session } } = await client.auth.getSession();
+  if(!session){ window.location.href = "login.html"; return false; }
+  currentUser = session.user;
+  var profileResult = await client.from("profiles").select("role").eq("id", currentUser.id).maybeSingle();
+  if(profileResult.error || !profileResult.data || profileResult.data.role !== "admin"){
+    document.getElementById("accessDenied").style.display = "block";
+    return false;
+  }
+  return true;
+}
+
+/* ================= SITO: logo / tracciamento / contatti ================= */
+async function loadSito(){
+  var settingsResult = await client.from("immonova_site_settings").select("logo_url,company_name,meta_pixel_id,ga_measurement_id").order("tenant_id",{ascending:false,nullsFirst:false}).limit(1).maybeSingle();
+  if(settingsResult.data){
+    document.getElementById("companyName").value = settingsResult.data.company_name || "";
+    document.getElementById("metaPixelId").value = settingsResult.data.meta_pixel_id || "";
+    document.getElementById("gaMeasurementId").value = settingsResult.data.ga_measurement_id || "";
+    if(settingsResult.data.logo_url){
+      var img = document.getElementById("logoPreview");
+      img.src = settingsResult.data.logo_url;
+      img.style.display = "block";
+      document.getElementById("logoPreviewEmpty").style.display = "none";
+    }
+  }
+  emails = (await client.from("immonova_contact_emails").select("*").order("sort_order")).data || [];
+  addresses = (await client.from("immonova_contact_addresses").select("*").order("sort_order")).data || [];
+  phones = (await client.from("immonova_contact_phones").select("*").order("sort_order")).data || [];
+  renderEmails();
+  renderAddresses();
+}
+
+function renderEmails(){
+  var list = document.getElementById("emailsList");
+  list.innerHTML = "";
+  emails.forEach(function(e, idx){
+    var row = document.createElement("div");
+    row.className = "row-item";
+    row.innerHTML =
+      '<div class="field"><label>Email</label><input type="email" value="' + escapeHTML(e.email) + '" data-field="email"></div>' +
+      '<div class="field"><label>Etichetta (opzionale)</label><input type="text" value="' + escapeHTML(e.label || "") + '" data-field="label" placeholder="Es. Amministrazione"></div>' +
+      '<label class="check-field"><input type="checkbox" data-field="is_primary" ' + (e.is_primary ? "checked" : "") + '> Principale</label>' +
+      '<button type="button" class="btn danger small" data-action="delete">Elimina</button>';
+    row.querySelectorAll("input").forEach(function(inp){
+      inp.addEventListener("change", function(){
+        var field = inp.getAttribute("data-field");
+        emails[idx][field] = field === "is_primary" ? inp.checked : inp.value;
+      });
+    });
+    row.querySelector('[data-action="delete"]').addEventListener("click", async function(){
+      if(e.id){
+        var delResult = await client.from("immonova_contact_emails").delete().eq("id", e.id);
+        if(delResult.error){ showStatus("emailsStatus", "Eliminazione non riuscita: " + delResult.error.message, "error"); return; }
+      }
+      emails.splice(idx, 1);
+      renderEmails();
+    });
+    list.appendChild(row);
+  });
+}
+document.getElementById("addEmailBtn").addEventListener("click", function(){
+  emails.push({ email:"", label:"", is_primary:false, sort_order:emails.length, active:true });
+  renderEmails();
+});
+async function saveAllEmails(){
+  for(var i = 0; i < emails.length; i++){
+    var e = emails[i];
+    if(!e.email) continue;
+    var payload = { email:e.email, label:e.label || null, is_primary:!!e.is_primary, sort_order:i, active:true };
+    if(e.id) await client.from("immonova_contact_emails").update(payload).eq("id", e.id);
+    else{ var ins = await client.from("immonova_contact_emails").insert(payload).select("id").single(); if(ins.data) e.id = ins.data.id; }
+  }
+}
+document.getElementById("saveEmailsBtn").addEventListener("click", async function(){
+  this.disabled = true;
+  showStatus("emailsStatus", "Salvataggio...", "");
+  try{ await saveAllEmails(); showStatus("emailsStatus", "Email salvate.", "success"); renderEmails(); }
+  catch(e){ showStatus("emailsStatus", "Errore: " + ((e && e.message) || e), "error"); }
+  this.disabled = false;
+});
+
+function phonesForAddress(addressId){ return phones.filter(function(p){ return p.address_id === addressId || p._tempAddressRef === addressId; }); }
+function renderAddresses(){
+  var list = document.getElementById("addressesList");
+  list.innerHTML = "";
+  addresses.forEach(function(a, idx){
+    var row = document.createElement("div");
+    row.className = "row-item";
+    var addrPhones = phonesForAddress(a.id || a._tempId);
+    var phonesHtml = addrPhones.map(function(p, pIdx){
+      return '<div class="row-item" style="margin-top:8px">' +
+        '<div class="field"><label>Telefono</label><input type="text" value="' + escapeHTML(p.phone) + '" data-phone-field="phone" data-phone-idx="' + pIdx + '"></div>' +
+        '<div class="field"><label>Etichetta (opzionale)</label><input type="text" value="' + escapeHTML(p.label || "") + '" data-phone-field="label" data-phone-idx="' + pIdx + '" placeholder="Es. Centralino"></div>' +
+        '<button type="button" class="btn danger small" data-phone-action="delete" data-phone-idx="' + pIdx + '">Elimina</button></div>';
+    }).join("");
+    row.innerHTML =
+      '<div style="width:100%;display:flex;gap:10px;flex-wrap:wrap">' +
+      '<div class="field"><label>Etichetta indirizzo</label><input type="text" value="' + escapeHTML(a.label || "") + '" data-field="label" placeholder="Es. Sede legale"></div>' +
+      '<div class="field" style="flex:2"><label>Indirizzo completo</label><input type="text" value="' + escapeHTML(a.address) + '" data-field="address"></div>' +
+      '<label class="check-field"><input type="checkbox" data-field="is_primary" ' + (a.is_primary ? "checked" : "") + '> Principale</label>' +
+      '<button type="button" class="btn danger small" data-action="delete">Elimina indirizzo</button></div>' +
+      '<div class="phones-block"><div class="phones-block-title">Telefoni collegati a questo indirizzo</div>' + phonesHtml +
+      '<button type="button" class="btn secondary small" data-action="add-phone" style="margin-top:8px">+ Aggiungi telefono</button></div>';
+    row.querySelectorAll('input[data-field]').forEach(function(inp){
+      inp.addEventListener("change", function(){
+        var field = inp.getAttribute("data-field");
+        addresses[idx][field] = field === "is_primary" ? inp.checked : inp.value;
+      });
+    });
+    row.querySelector('[data-action="delete"]').addEventListener("click", async function(){
+      if(a.id){
+        var delResult = await client.from("immonova_contact_addresses").delete().eq("id", a.id);
+        if(delResult.error){ showStatus("addressesStatus", "Eliminazione non riuscita: " + delResult.error.message, "error"); return; }
+      }
+      phones = phones.filter(function(p){ return p.address_id !== a.id && p._tempAddressRef !== a._tempId; });
+      addresses.splice(idx, 1);
+      renderAddresses();
+    });
+    row.querySelector('[data-action="add-phone"]').addEventListener("click", function(){
+      if(!a.id && !a._tempId) a._tempId = "temp_" + Date.now() + "_" + idx;
+      phones.push({ address_id:a.id || null, _tempAddressRef:a.id || a._tempId, phone:"", label:"", sort_order:phonesForAddress(a.id || a._tempId).length, active:true });
+      renderAddresses();
+    });
+    row.querySelectorAll('[data-phone-field]').forEach(function(inp){
+      inp.addEventListener("change", function(){
+        var field = inp.getAttribute("data-phone-field");
+        var pIdx = Number(inp.getAttribute("data-phone-idx"));
+        var p = addrPhones[pIdx];
+        var globalIdx = phones.indexOf(p);
+        if(globalIdx !== -1) phones[globalIdx][field] = inp.value;
+      });
+    });
+    row.querySelectorAll('[data-phone-action="delete"]').forEach(function(btn){
+      btn.addEventListener("click", async function(){
+        var pIdx = Number(btn.getAttribute("data-phone-idx"));
+        var p = addrPhones[pIdx];
+        if(p.id){
+          var delResult = await client.from("immonova_contact_phones").delete().eq("id", p.id);
+          if(delResult.error){ showStatus("addressesStatus", "Eliminazione telefono non riuscita: " + delResult.error.message, "error"); return; }
+        }
+        var globalIdx = phones.indexOf(p);
+        if(globalIdx !== -1) phones.splice(globalIdx, 1);
+        renderAddresses();
+      });
+    });
+    list.appendChild(row);
+  });
+}
+document.getElementById("addAddressBtn").addEventListener("click", function(){
+  addresses.push({ address:"", label:"", is_primary:false, sort_order:addresses.length, active:true, _tempId:"temp_" + Date.now() });
+  renderAddresses();
+});
+async function saveAllAddressesAndPhones(){
+  for(var i = 0; i < addresses.length; i++){
+    var a = addresses[i];
+    if(!a.address) continue;
+    var payload = { label:a.label || null, address:a.address, is_primary:!!a.is_primary, sort_order:i, active:true };
+    var addressId = a.id;
+    if(addressId) await client.from("immonova_contact_addresses").update(payload).eq("id", addressId);
+    else{ var ins = await client.from("immonova_contact_addresses").insert(payload).select("id").single(); if(ins.data){ addressId = ins.data.id; a.id = addressId; } }
+    var thisAddrPhones = phones.filter(function(p){ return p.address_id === (a.id) || p._tempAddressRef === (a._tempId || a.id); });
+    for(var j = 0; j < thisAddrPhones.length; j++){
+      var p = thisAddrPhones[j];
+      if(!p.phone) continue;
+      var phonePayload = { address_id:addressId, phone:p.phone, label:p.label || null, sort_order:j, active:true };
+      if(p.id) await client.from("immonova_contact_phones").update(phonePayload).eq("id", p.id);
+      else{ var pIns = await client.from("immonova_contact_phones").insert(phonePayload).select("id").single(); if(pIns.data){ p.id = pIns.data.id; p.address_id = addressId; } }
+    }
+  }
+}
+document.getElementById("saveAddressesBtn").addEventListener("click", async function(){
+  this.disabled = true;
+  showStatus("addressesStatus", "Salvataggio...", "");
+  try{ await saveAllAddressesAndPhones(); showStatus("addressesStatus", "Indirizzi e telefoni salvati.", "success"); renderAddresses(); }
+  catch(e){ showStatus("addressesStatus", "Errore: " + ((e && e.message) || e), "error"); }
+  this.disabled = false;
+});
+document.getElementById("saveLogoBtn").addEventListener("click", async function(){
+  var btn = this;
+  btn.disabled = true;
+  showStatus("logoStatus", "Salvataggio...", "");
+  try{
+    var fileInput = document.getElementById("logoFile");
+    var companyName = document.getElementById("companyName").value.trim();
+    var logoUrl = null;
+    if(fileInput.files && fileInput.files[0]){
+      var file = fileInput.files[0];
+      var path = "logo/" + Date.now() + "-" + file.name.replace(/[^a-zA-Z0-9.\-_]/g, "_");
+      var uploadResult = await client.storage.from("site-assets").upload(path, file, { upsert:true });
+      if(uploadResult.error) throw uploadResult.error;
+      logoUrl = client.storage.from("site-assets").getPublicUrl(path).data.publicUrl;
+    }
+    var updatePayload = { company_name: companyName || "DOMINUS" };
+    if(logoUrl) updatePayload.logo_url = logoUrl;
+    var updateResult = await client.from("immonova_site_settings").upsert(updatePayload, { onConflict: "tenant_id" }).select();
+    if(updateResult.error) throw updateResult.error;
+    if(!updateResult.data || !updateResult.data.length) throw new Error("Salvataggio bloccato dai permessi.");
+    if(logoUrl){
+      var img = document.getElementById("logoPreview");
+      img.src = logoUrl; img.style.display = "block";
+      document.getElementById("logoPreviewEmpty").style.display = "none";
+      fileInput.value = "";
+    }
+    showStatus("logoStatus", "Salvato.", "success");
+  }catch(e){ showStatus("logoStatus", "Errore: " + ((e && e.message) || e), "error"); }
+  btn.disabled = false;
+});
+document.getElementById("saveAnalyticsBtn").addEventListener("click", async function(){
+  var btn = this;
+  btn.disabled = true;
+  showStatus("analyticsStatus", "Salvataggio...", "");
+  try{
+    var updateResult = await client.from("immonova_site_settings").upsert({
+      meta_pixel_id: document.getElementById("metaPixelId").value.trim() || null,
+      ga_measurement_id: document.getElementById("gaMeasurementId").value.trim() || null
+    }, { onConflict: "tenant_id" }).select();
+    if(updateResult.error) throw updateResult.error;
+    if(!updateResult.data || !updateResult.data.length) throw new Error("Salvataggio bloccato dai permessi.");
+    showStatus("analyticsStatus", "Salvato.", "success");
+  }catch(e){ showStatus("analyticsStatus", "Errore: " + ((e && e.message) || e), "error"); }
+  btn.disabled = false;
+});
+
+/* ================= CALENDARI: connessioni personali ================= */
+var myConnections = { icloud:null, google:null };
+async function loadMyConnections(){
+  var result = await client.from("immonova_calendar_connections").select("provider,active,icloud_username,last_synced_at,last_sync_error").eq("user_id", currentUser.id);
+  myConnections = { icloud:null, google:null };
+  (result.data || []).forEach(function(row){ myConnections[row.provider] = row; });
+  renderConnectionsUI();
+}
+function renderConnectionsUI(){
+  var icloudStatus = document.getElementById("icloudConnectionStatus");
+  var disconnectIcloudBtn = document.getElementById("disconnectIcloudBtn");
+  var connectIcloudBtn = document.getElementById("connectIcloudBtn");
+  if(myConnections.icloud && myConnections.icloud.active){
+    var icloudLine = "iCloud collegato: " + escapeHTML(myConnections.icloud.icloud_username || "");
+    if(myConnections.icloud.last_sync_error) icloudLine += " — errore sincronizzazione: " + escapeHTML(myConnections.icloud.last_sync_error);
+    icloudStatus.innerHTML = icloudLine;
+    icloudStatus.className = myConnections.icloud.last_sync_error ? "error" : "success";
+    connectIcloudBtn.style.display = "none";
+    document.getElementById("icloudUsername").style.display = "none";
+    document.getElementById("icloudAppPassword").style.display = "none";
+    disconnectIcloudBtn.style.display = "inline-block";
+  }else{
+    icloudStatus.textContent = "Nessun account iCloud collegato.";
+    icloudStatus.className = "";
+    connectIcloudBtn.style.display = "inline-block";
+    document.getElementById("icloudUsername").style.display = "block";
+    document.getElementById("icloudAppPassword").style.display = "block";
+    disconnectIcloudBtn.style.display = "none";
+  }
+  var googleStatus = document.getElementById("googleConnectionStatus");
+  var connectGoogleBtn = document.getElementById("connectGoogleBtn");
+  var disconnectGoogleBtn = document.getElementById("disconnectGoogleBtn");
+  if(myConnections.google && myConnections.google.active){
+    var googleLine = "Google Calendar collegato.";
+    if(myConnections.google.last_sync_error) googleLine += " — errore sincronizzazione: " + escapeHTML(myConnections.google.last_sync_error);
+    googleStatus.innerHTML = googleLine;
+    googleStatus.className = myConnections.google.last_sync_error ? "error" : "success";
+    connectGoogleBtn.style.display = "none";
+    disconnectGoogleBtn.style.display = "inline-block";
+  }else{
+    googleStatus.textContent = "Nessun account Google Calendar collegato.";
+    googleStatus.className = "";
+    connectGoogleBtn.style.display = "inline-block";
+    disconnectGoogleBtn.style.display = "none";
+  }
+}
+document.getElementById("connectIcloudBtn").addEventListener("click", async function(){
+  var username = document.getElementById("icloudUsername").value.trim();
+  var appPassword = document.getElementById("icloudAppPassword").value.trim();
+  if(!username || !appPassword) return;
+  var btn = this; btn.disabled = true;
+  var statusEl = document.getElementById("connectionsStatus");
+  statusEl.className = ""; statusEl.textContent = "Collegamento in corso...";
+  try{
+    var result = await client.functions.invoke("immonova-calendar-connect-icloud", { body:{ icloud_username:username, icloud_app_password:appPassword } });
+    if(result.error || !result.data || result.data.success !== true){
+      var msg = (result.data && result.data.error) || (result.error ? await extractEdgeFunctionErrorMessage(result.error) : "errore sconosciuto");
+      statusEl.className = "error";
+      statusEl.textContent = "Collegamento iCloud non riuscito: " + msg;
+    }else{
+      statusEl.textContent = "";
+      document.getElementById("icloudAppPassword").value = "";
+      await loadMyConnections();
+    }
+  }catch(e){ statusEl.className = "error"; statusEl.textContent = "Collegamento iCloud non riuscito: " + ((e && e.message) || e); }
+  btn.disabled = false;
+});
+document.getElementById("disconnectIcloudBtn").addEventListener("click", async function(){
+  var statusEl = document.getElementById("connectionsStatus");
+  statusEl.className = ""; statusEl.textContent = "Scollegamento in corso...";
+  await client.from("immonova_calendar_connections").delete().eq("user_id", currentUser.id).eq("provider", "icloud");
+  statusEl.textContent = "Calendario scollegato.";
+  await loadMyConnections();
+});
+document.getElementById("connectGoogleBtn").addEventListener("click", async function(){
+  var btn = this; btn.disabled = true;
+  var statusEl = document.getElementById("connectionsStatus");
+  statusEl.className = ""; statusEl.textContent = "";
+  try{
+    var result = await client.functions.invoke("immonova-google-oauth-start", { body:{} });
+    if(result.error || !result.data || result.data.success !== true || !result.data.auth_url){
+      var msg = (result.data && result.data.error) || (result.error ? await extractEdgeFunctionErrorMessage(result.error) : "errore sconosciuto");
+      statusEl.className = "error";
+      statusEl.textContent = "Collegamento Google Calendar non riuscito: " + msg;
+      btn.disabled = false;
+      return;
+    }
+    window.location.href = result.data.auth_url;
+  }catch(e){ statusEl.className = "error"; statusEl.textContent = "Collegamento Google Calendar non riuscito: " + ((e && e.message) || e); btn.disabled = false; }
+});
+document.getElementById("disconnectGoogleBtn").addEventListener("click", async function(){
+  var statusEl = document.getElementById("connectionsStatus");
+  statusEl.className = ""; statusEl.textContent = "Scollegamento in corso...";
+  await client.from("immonova_calendar_connections").delete().eq("user_id", currentUser.id).eq("provider", "google");
+  statusEl.textContent = "Calendario scollegato.";
+  await loadMyConnections();
+});
+function handleGoogleConnectRedirect(){
+  var params = new URLSearchParams(window.location.search);
+  var status = params.get("google_connect");
+  if(!status) return;
+  var statusEl = document.getElementById("connectionsStatus");
+  if(status === "success"){ statusEl.className = "success"; statusEl.textContent = "Google Calendar collegato."; }
+  else{ statusEl.className = "error"; statusEl.textContent = "Collegamento Google Calendar non riuscito."; }
+  var url = new URL(window.location.href);
+  url.searchParams.delete("google_connect");
+  window.history.replaceState({}, "", url.toString());
+  document.querySelector('.tab-btn[data-tab="calendari"]').click();
+}
+
+/* ================= SOCIAL ================= */
+async function loadSocial(){
+  const result = await client.from("site_settings").select("*").order("tenant_id",{ascending:false,nullsFirst:false}).limit(1).maybeSingle();
+  if(result.data){
+    document.getElementById("instagram_url").value = result.data.instagram_url || "";
+    document.getElementById("facebook_url").value = result.data.facebook_url || "";
+    document.getElementById("linkedin_url").value = result.data.linkedin_url || "";
+  }
+}
+document.getElementById("saveSocialBtn").addEventListener("click", async function(){
+  var btn = this; btn.disabled = true;
+  showStatus("socialStatus", "Salvataggio...", "");
+  const payload = {
+    instagram_url: document.getElementById("instagram_url").value.trim() || null,
+    facebook_url: document.getElementById("facebook_url").value.trim() || null,
+    linkedin_url: document.getElementById("linkedin_url").value.trim() || null,
+    updated_at: new Date().toISOString()
+  };
+  const { data, error } = await client.from("site_settings").upsert(payload, { onConflict: "tenant_id" }).select();
+  btn.disabled = false;
+  if(error){ showStatus("socialStatus", "Errore: " + error.message, "error"); return; }
+  if(!data || !data.length){ showStatus("socialStatus", "Salvataggio bloccato dai permessi.", "error"); return; }
+  showStatus("socialStatus", "Link social salvati.", "success");
+});
+
+/* ================= PORTALI IMMOBILIARI ================= */
+async function loadPortali(){
+  const { data, error } = await client.from("immonova_portal_settings").select("*");
+  if(error || !data) return;
+  const imm = data.find(d => d.portal_key === "immobiliare_it");
+  const ide = data.find(d => d.portal_key === "idealista");
+  if(imm){
+    document.getElementById("enabledImmobiliare").checked = imm.enabled;
+    document.getElementById("statusImmobiliare").textContent = imm.enabled ? "attivo" : "non attivo";
+    document.getElementById("statusImmobiliare").className = "portal-status " + (imm.enabled ? "attivo" : "non-attivo");
+    const c = imm.credentials || {};
+    document.getElementById("immUsername").value = c.username || "";
+    document.getElementById("immPassword").value = c.password || "";
+    document.getElementById("immEndpoint").value = c.endpoint || "";
+    document.getElementById("immSourceId").value = c.source_id || "";
+    document.getElementById("immAgencyEmail").value = c.agency_email || "";
+  }
+  if(ide){
+    document.getElementById("enabledIdealista").checked = ide.enabled;
+    document.getElementById("statusIdealista").textContent = ide.enabled ? "attivo" : "non attivo";
+    document.getElementById("statusIdealista").className = "portal-status " + (ide.enabled ? "attivo" : "non-attivo");
+    document.getElementById("ideCredentials").value = JSON.stringify(ide.credentials || {});
+  }
+}
+async function togglePortal(portalKey, enabled){
+  await client.from("immonova_portal_settings").upsert({ portal_key: portalKey, enabled }, { onConflict: "tenant_id,portal_key" });
+  await loadPortali();
+}
+document.getElementById("enabledImmobiliare").addEventListener("change", function(){ togglePortal("immobiliare_it", this.checked); });
+document.getElementById("enabledIdealista").addEventListener("change", function(){ togglePortal("idealista", this.checked); });
+document.getElementById("saveImmBtn").addEventListener("click", async function(){
+  var statusEl = document.getElementById("statusImm");
+  var credentials = {
+    username: document.getElementById("immUsername").value.trim(),
+    password: document.getElementById("immPassword").value,
+    endpoint: document.getElementById("immEndpoint").value.trim(),
+    source_id: document.getElementById("immSourceId").value.trim(),
+    agency_email: document.getElementById("immAgencyEmail").value.trim(),
+  };
+  const { error } = await client.from("immonova_portal_settings").upsert({ portal_key:"immobiliare_it", credentials, updated_at: new Date().toISOString() }, { onConflict: "tenant_id,portal_key" });
+  if(error){ statusEl.textContent = "Errore: " + error.message; statusEl.className = "status error"; return; }
+  statusEl.textContent = "Salvato."; statusEl.className = "status success";
+});
+document.getElementById("saveIdeBtn").addEventListener("click", async function(){
+  var statusEl = document.getElementById("statusIde");
+  let credentials = {};
+  try{ credentials = JSON.parse(document.getElementById("ideCredentials").value || "{}"); }
+  catch(e){ statusEl.textContent = "JSON non valido"; statusEl.className = "status error"; return; }
+  const { error } = await client.from("immonova_portal_settings").upsert({ portal_key:"idealista", credentials, updated_at: new Date().toISOString() }, { onConflict: "tenant_id,portal_key" });
+  if(error){ statusEl.textContent = "Errore: " + error.message; statusEl.className = "status error"; return; }
+  statusEl.textContent = "Salvato."; statusEl.className = "status success";
+});
+async function loadPortalLog(){
+  const { data, error } = await client.from("immonova_portal_sync_log").select("*, opportunities(title)").order("synced_at", { ascending: false }).limit(30);
+  if(error || !data) return;
+  document.getElementById("logBody").innerHTML = data.map(row => `
+    <tr><td>${escapeHTML(row.opportunities?.title || row.opportunity_id)}</td><td>${escapeHTML(row.portal_key)}</td>
+    <td class="log-${row.status}">${escapeHTML(row.status)}${row.message ? " — "+escapeHTML(row.message) : ""}</td>
+    <td>${new Date(row.synced_at).toLocaleString("it-IT")}</td></tr>`).join("") || '<tr><td colspan="4">Nessuna pubblicazione ancora.</td></tr>';
+}
+
+document.getElementById("logoutBtn").addEventListener("click", async function(){
+  await client.auth.signOut();
+  window.location.href = "login.html";
+});
+
+(async function init(){
+  var ok = await checkAuthAdmin();
+  if(!ok) return;
+  document.getElementById("mainContent").style.display = "grid";
+  await loadSito();
+  await loadMyConnections();
+  handleGoogleConnectRedirect();
+  await loadSocial();
+  await loadPortali();
+  await loadPortalLog();
+})();
+</script>
+
+</body>
+</html>
