@@ -149,7 +149,7 @@ td{color:var(--text-color,#7f6430)}
 <script src="../js/theme-loader.js"></script>
 <script src="../js/site-branding.js"></script>
 <script>
-var client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+var client = window.supabaseClient;
 var statusBox = document.getElementById("status");
 
 function escapeHTML(v){

@@ -303,7 +303,7 @@ textarea{min-height:110px;resize:vertical;line-height:1.7}
 <script src="../js/site-branding.js"></script>
 
 <script>
-const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const client = window.supabaseClient;
 
 const form = document.getElementById("mandateForm");
 const params = new URLSearchParams(window.location.search);

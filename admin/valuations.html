@@ -210,7 +210,7 @@ Tutte le valutazioni immobiliari registrate per i venditori.
 <script src="../js/site-branding.js"></script>
 
 <script>
-const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const client = window.supabaseClient;
 
 const table = document.getElementById("valuationsTable");
 const statusBox = document.getElementById("status");

@@ -63,7 +63,7 @@
 <!-- config.js e la libreria Supabase sono già caricati in cima a <head> (per
      site-analytics.js): qui si crea solo il client usato dal resto della pagina. -->
 <script>
-  var immonovaClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  var immonovaClient = window.supabaseClient;
 </script>
 <script>
 // Registra il service worker (necessario per installabilità + notifiche push)

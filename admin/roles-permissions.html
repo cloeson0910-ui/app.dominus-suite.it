@@ -113,7 +113,7 @@ Riservato al Super Amministratore. Definisci quali sezioni della piattaforma ogn
 <script src="../js/theme-loader.js"></script>
 
 <script>
-const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const client = window.supabaseClient;
 let currentUser = null;
 let roles = [];
 let permissionRows = {}; // resource_key -> { role_id: {read,write} }

@@ -825,7 +825,7 @@ html[dir="rtl"] .data-grid{direction:rtl}
 <script src="js/site-analytics.js"></script>
 
 <script>
-const client = window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
+const client = window.supabaseClient;
 
 const params = new URLSearchParams(window.location.search);
 const id = params.get("id");

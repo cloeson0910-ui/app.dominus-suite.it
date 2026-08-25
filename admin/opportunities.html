@@ -519,10 +519,7 @@ Caricamento area riservata...
 <script src="../js/site-branding.js"></script>
 
 <script>
-const client = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
-);
+const client = window.supabaseClient;
 
 const table = document.getElementById("opportunitiesTable");
 const statusBox = document.getElementById("status");

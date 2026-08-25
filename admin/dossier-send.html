@@ -235,7 +235,7 @@ body.pdf-export-mode,body.pdf-export-mode{width:297mm;min-height:210mm;backgroun
 <script src="../js/theme-loader.js"></script>
 <script src="../js/site-branding.js"></script>
 <script>
-var client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+var client = window.supabaseClient;
 var params = new URLSearchParams(window.location.search);
 var opportunityId = params.get("id") || params.get("opportunity_id");
 var requestId = params.get("request_id");

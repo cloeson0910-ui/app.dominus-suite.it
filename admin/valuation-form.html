@@ -433,7 +433,7 @@ textarea{min-height:100px;resize:vertical;line-height:1.6}
 <script src="../js/site-branding.js"></script>
 
 <script>
-const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const client = window.supabaseClient;
 
 const params = new URLSearchParams(window.location.search);
 const valuationId = params.get("id");

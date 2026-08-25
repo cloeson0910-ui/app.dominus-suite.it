@@ -71,7 +71,7 @@
 <script>
 var VAPID_PUBLIC_KEY = "BKSNGyB_2rF1krXLKppDB022aJasOv2fIeogcpZykaMFOtXP4UAzMXgWpi7vBmSbkd3YCZ0s6hBO7GKtVDB8A7s";
 
-var client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+var client = window.supabaseClient;
 var consentCheck = document.getElementById("consentCheck");
 var acceptBtn = document.getElementById("acceptBtn");
 var skipBtn = document.getElementById("skipBtn");

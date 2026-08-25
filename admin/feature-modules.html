@@ -73,7 +73,7 @@ Riservato al Super Amministratore. Accendi o spegni ogni modulo per attivare i p
 <script src="../js/theme-loader.js"></script>
 
 <script>
-const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const client = window.supabaseClient;
 let modules = [];
 
 function esc(v){ return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }

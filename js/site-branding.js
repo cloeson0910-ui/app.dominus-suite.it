@@ -31,7 +31,7 @@
       tries++;
       if(window.supabase && typeof SUPABASE_URL !== "undefined" && typeof SUPABASE_ANON_KEY !== "undefined"){
         clearInterval(iv);
-        ownClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        ownClient = window.supabaseClient;
         cb(ownClient);
       }else if(tries > 100){ clearInterval(iv); } // ~10s, poi rinuncia silenziosamente
     }, 100);
@@ -129,7 +129,7 @@
 
   whenClientReady(function(client){
     Promise.all([
-      client.from("immonova_site_settings").select("logo_url,company_name").eq("id", 1).single(),
+      client.from("immonova_site_settings").select("logo_url,company_name").maybeSingle(),
       client.from("immonova_contact_emails").select("email,label,is_primary,sort_order").eq("active", true).order("sort_order"),
       client.from("immonova_contact_addresses").select("id,label,address,is_primary,sort_order").eq("active", true).order("sort_order"),
       client.from("immonova_contact_phones").select("id,address_id,phone,label,sort_order").eq("active", true).order("sort_order"),

@@ -240,7 +240,7 @@ Tutti i mandati di ricerca registrati: caratteristiche richieste dai clienti che
 <script src="../js/site-branding.js"></script>
 
 <script>
-const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const client = window.supabaseClient;
 
 const table = document.getElementById("mandatesTable");
 const statusBox = document.getElementById("status");

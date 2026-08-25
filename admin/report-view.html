@@ -257,7 +257,7 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;background:none,none,no
 <script src="../js/theme-loader.js"></script>
 <script src="../js/site-branding.js"></script>
 <script>
-var client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+var client = window.supabaseClient;
 var params = new URLSearchParams(window.location.search);
 var opportunityId = params.get("id");
 var statusBox = document.getElementById("status");

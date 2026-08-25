@@ -17,7 +17,7 @@
       tries++;
       if(window.supabase && typeof SUPABASE_URL !== "undefined" && typeof SUPABASE_ANON_KEY !== "undefined"){
         clearInterval(iv);
-        ownClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        ownClient = window.supabaseClient;
         cb(ownClient);
       }else if(tries > 100){
         clearInterval(iv);
@@ -77,7 +77,7 @@
 
   function loadTheme(){
     whenClientReady(function(client){
-      client.from("immonova_theme_settings").select("*").eq("id", 1).single()
+      client.from("immonova_theme_settings").select("*").maybeSingle()
         .then(function(result){
           if(result.error){
             console.warn("Caricamento tema non riuscito (uso i valori di default):", result.error.message);

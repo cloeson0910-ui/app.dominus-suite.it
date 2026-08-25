@@ -287,7 +287,7 @@ loadPreview();
     s2.src = "../js/config.js";
     s2.onload = function(){
       try{
-        var client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        var client = window.supabaseClient;
         client.auth.getSession().then(function(result){
           if(result.error || !result.data.session){
             window.location.href = "login.html";

@@ -109,7 +109,7 @@ body::after{content:"";position:fixed;inset:0;z-index:-1;background:none,none,no
 <script src="js/site-branding.js"></script>
 <script src="js/site-analytics.js"></script>
 <script>
-const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const client = window.supabaseClient;
 const grid = document.getElementById('eventsGrid');
 const statusBox = document.getElementById('status');
 let allEvents = [];

@@ -127,7 +127,7 @@ Logo e contatti (email, indirizzi, telefoni) usati su tutte le pagine del sito. 
 <script src="../js/site-branding.js"></script>
 
 <script>
-const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const client = window.supabaseClient;
 let currentUser = null;
 let emails = [];
 let addresses = [];
@@ -148,7 +148,7 @@ async function checkAuthAdmin(){
 }
 
 async function loadSettings(){
-  var settingsResult = await client.from("immonova_site_settings").select("logo_url,company_name,meta_pixel_id,ga_measurement_id").eq("id",1).single();
+  var settingsResult = await client.from("immonova_site_settings").select("logo_url,company_name,meta_pixel_id,ga_measurement_id").maybeSingle();
   if(settingsResult.data){
     document.getElementById("companyName").value = settingsResult.data.company_name || "";
     document.getElementById("metaPixelId").value = settingsResult.data.meta_pixel_id || "";
@@ -394,7 +394,7 @@ document.getElementById("saveLogoBtn").addEventListener("click", async function(
     var updatePayload = { company_name: companyName || "DOMINUS" };
     if(logoUrl) updatePayload.logo_url = logoUrl;
 
-    var updateResult = await client.from("immonova_site_settings").update(updatePayload).eq("id", 1);
+    var updateResult = await client.from("immonova_site_settings").upsert(updatePayload, { onConflict: "tenant_id" });
     if(updateResult.error) throw updateResult.error;
 
     if(logoUrl){
@@ -418,10 +418,10 @@ document.getElementById("saveAnalyticsBtn").addEventListener("click", async func
   btn.disabled = true;
   showStatus("analyticsStatus", "Salvataggio...", "");
   try{
-    var updateResult = await client.from("immonova_site_settings").update({
+    var updateResult = await client.from("immonova_site_settings").upsert({
       meta_pixel_id: document.getElementById("metaPixelId").value.trim() || null,
       ga_measurement_id: document.getElementById("gaMeasurementId").value.trim() || null
-    }).eq("id", 1);
+    }, { onConflict: "tenant_id" });
     if(updateResult.error) throw updateResult.error;
     showStatus("analyticsStatus", "Salvato.", "success");
   }catch(e){

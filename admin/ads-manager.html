@@ -375,7 +375,7 @@ Gestisci le pagine sponsorizzate che compaiono nei dossier degli investitori, tr
 <script src="../js/site-branding.js"></script>
 
 <script>
-const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const client = window.supabaseClient;
 
 const clientNameInput=document.getElementById("clientName");
 const imageFileInput=document.getElementById("imageFile");

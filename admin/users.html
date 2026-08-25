@@ -490,10 +490,7 @@ td{
 <script src="../js/site-branding.js"></script>
 
 <script>
-var client = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
-);
+var client = window.supabaseClient;
 
 var userForm = document.getElementById("userForm");
 var statusBox = document.getElementById("status");

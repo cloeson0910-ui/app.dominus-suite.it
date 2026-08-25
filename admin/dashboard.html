@@ -596,8 +596,9 @@ body::after{
 <script src="../js/theme-loader.js"></script>
 <script src="../js/license-gate.js"></script>
 <script src="../js/site-branding.js"></script>
+<script src="../js/welcome-demo.js"></script>
 <script>
-const client=window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const client=window.supabaseClient;
 let currentUser=null,currentProfile=null,isAdmin=false;
 let allOpportunities=[],latestReports=[],investorRequests=[],allInvestors=[],allEvents=[],contactHistory=[],allProfiles=[];
 let selectedOwnerId="";

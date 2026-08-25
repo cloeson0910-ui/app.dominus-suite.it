@@ -219,7 +219,7 @@ body::after{
 <script src="js/site-analytics.js"></script>
 <script>
 var VAPID_PUBLIC_KEY = "BKSNGyB_2rF1krXLKppDB022aJasOv2fIeogcpZykaMFOtXP4UAzMXgWpi7vBmSbkd3YCZ0s6hBO7GKtVDB8A7s";
-var client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+var client = window.supabaseClient;
 var pageBody = document.getElementById("pageBody");
 var statusBox = document.getElementById("status");
 var currentUser = null;

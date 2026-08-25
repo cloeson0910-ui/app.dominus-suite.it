@@ -269,7 +269,7 @@ textarea{min-height:220px;resize:vertical;line-height:1.7}
 <script src="../js/site-branding.js"></script>
 
 <script>
-const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const client = window.supabaseClient;
 
 const form = document.getElementById("composerForm");
 const sendBtn = document.getElementById("sendBtn");

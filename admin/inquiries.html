@@ -305,10 +305,7 @@ Gestisci tutte le richieste ricevute dai clienti e aggiorna lo stato commerciale
 <script src="../js/site-branding.js"></script>
 
 <script>
-const client = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
-);
+const client = window.supabaseClient;
 
 const table = document.getElementById("inquiriesTable");
 const statusMessage = document.getElementById("statusMessage");

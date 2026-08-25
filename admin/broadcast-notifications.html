@@ -139,7 +139,7 @@ Le notifiche push funzionano solo per chi ha già dato il consenso (pagina "Noti
 <script src="../js/site-branding.js"></script>
 
 <script>
-const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const client = window.supabaseClient;
 let currentUser = null;
 let currentSession = null;
 

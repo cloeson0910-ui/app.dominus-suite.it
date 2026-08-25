@@ -402,7 +402,7 @@ body[dir="rtl"] .grid,body[dir="rtl"] .header,body[dir="rtl"] .step{direction:rt
 <script>
 document.getElementById("year").textContent = new Date().getFullYear();
 
-var client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+var client = window.supabaseClient;
 var form = document.getElementById("relocationForm");
 var statusBox = document.getElementById("status");
 var submitBtn = document.getElementById("submitBtn");

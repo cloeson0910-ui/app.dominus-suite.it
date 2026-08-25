@@ -23,7 +23,7 @@
       tries++;
       if(window.supabase && typeof SUPABASE_URL !== "undefined" && typeof SUPABASE_ANON_KEY !== "undefined"){
         clearInterval(iv);
-        ownClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        ownClient = window.supabaseClient;
         cb(ownClient);
       }else if(tries > 100){ clearInterval(iv); }
     }, 100);
@@ -57,7 +57,7 @@
   }
 
   whenClientReady(function(client){
-    client.from("immonova_site_settings").select("meta_pixel_id,ga_measurement_id").eq("id", 1).single()
+    client.from("immonova_site_settings").select("meta_pixel_id,ga_measurement_id").maybeSingle()
       .then(function(result){
         var data = result && result.data;
         if(!data) return;

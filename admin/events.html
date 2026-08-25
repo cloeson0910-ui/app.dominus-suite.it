@@ -35,7 +35,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="../js/config.js"></script>
 <script src="../js/theme-loader.js"></script>
 <script src="../js/site-branding.js"></script><script>
-const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);const table=document.getElementById('eventsTable');const statusBox=document.getElementById('status');let allEvents=[];let currentUser=null;let currentUserLanguage="it";
+const client=window.supabaseClient;const table=document.getElementById('eventsTable');const statusBox=document.getElementById('status');let allEvents=[];let currentUser=null;let currentUserLanguage="it";
 
 /* ---- i18n: stesso meccanismo delle altre pagine admin (vedi users.html). Client Supabase
    "client" come nelle altre pagine "nav style". checkAuth() qui non caricava un profilo (solo

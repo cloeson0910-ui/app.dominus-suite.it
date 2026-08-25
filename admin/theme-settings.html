@@ -175,7 +175,7 @@ Colori, font e sfondo di tutto il sito e della dashboard. Le modifiche qui si ap
 <script src="../js/theme-loader.js"></script>
 
 <script>
-const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const client = window.supabaseClient;
 let currentUser = null;
 let canWrite = false;
 
@@ -230,7 +230,10 @@ function updateBackgroundFieldsVisibility(){
 }
 
 async function loadTheme(){
-  const { data, error } = await client.from("immonova_theme_settings").select("*").eq("id", 1).single();
+  // Niente più "id=1" fisso: le regole di sicurezza mostrano da sole solo
+  // la riga del proprio tenant. maybeSingle perché un tenant nuovo può non
+  // avere ancora nessuna riga (usa i valori di default sotto).
+  const { data, error } = await client.from("immonova_theme_settings").select("*").maybeSingle();
   if(error || !data) return;
 
   document.getElementById("primary_color").value = data.primary_color || "#a67f34";
@@ -284,7 +287,10 @@ async function saveTheme(){
     updated_by: currentUser.id
   };
 
-  const { error } = await client.from("immonova_theme_settings").update(payload).eq("id", 1);
+  // "upsert" invece di "update...eq id=1": crea la riga del proprio tenant
+  // se non esiste ancora, la aggiorna se già c'è — mai più la riga di
+  // qualcun altro.
+  const { error } = await client.from("immonova_theme_settings").upsert(payload, { onConflict: "tenant_id" });
 
   saveBtn.disabled = false;
 

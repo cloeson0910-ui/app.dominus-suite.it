@@ -205,10 +205,7 @@ button:hover{
 
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-  const client = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_ANON_KEY
-  );
+  const client = window.supabaseClient;
 
   const form = document.getElementById("loginForm");
   const errorBox = document.getElementById("error");
