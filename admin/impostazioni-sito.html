@@ -71,6 +71,18 @@ input:checked + .slider:before{transform:translateX(20px)}
 .log-successo{color:#4f7f45}
 .log-errore{color:#9c2f2f}
 
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+input[type="color"]{padding:4px;height:44px;cursor:pointer}
+.color-row{display:flex;gap:10px;align-items:center}
+.color-row input[type="color"]{width:56px;flex-shrink:0}
+.color-row input[type="text"]{flex:1}
+.preview{margin-top:6px;padding:20px;border:1px solid rgba(166,127,52,.2);background:var(--page-bg-color,#f4ecdf)}
+.preview-header{padding:14px 18px;background:var(--menu-bg-color,rgba(244,236,223,.72));color:var(--menu-text-color,#a67f34);letter-spacing:.2em;font-size:13px;margin-bottom:14px}
+.preview-btn{display:inline-block;padding:10px 18px;background:var(--primary-color,#a67f34);color:#fff;font-size:11px;letter-spacing:.1em;text-transform:uppercase;margin-right:10px}
+.preview-text{color:var(--text-color,#7f6430);font-size:13px;margin-top:10px;font-family:var(--font-family)}
+.app-icon-preview{width:96px;height:96px;object-fit:cover;border-radius:20px;display:block;margin-bottom:14px;background:rgba(255,255,255,.4);padding:4px}
+.app-icon-empty{font-size:12px;color:#8f7643;margin-bottom:14px}
+@media(max-width:820px){.grid{grid-template-columns:1fr}}
 .status{margin-top:10px;font-size:13px;min-height:18px}
 .success{color:#4f7f45}
 .error{color:#9c2f2f}
@@ -98,6 +110,8 @@ input:checked + .slider:before{transform:translateX(20px)}
 
 <nav class="tabs">
 <button type="button" class="tab-btn active" data-tab="sito">Sito</button>
+<button type="button" class="tab-btn" data-tab="aspetto">Aspetto</button>
+<button type="button" class="tab-btn" data-tab="app">App</button>
 <button type="button" class="tab-btn" data-tab="calendari">Calendari</button>
 <button type="button" class="tab-btn" data-tab="social">Social</button>
 <button type="button" class="tab-btn" data-tab="portali">Portali Immobiliari</button>
@@ -142,6 +156,89 @@ input:checked + .slider:before{transform:translateX(20px)}
 <div id="addressesStatus" class="status"></div>
 </div>
 
+</div>
+
+<!-- ============ PANNELLO: ASPETTO (colori, font, sfondo) ============ -->
+<div class="panel" id="panel-aspetto">
+
+<div class="section">
+<div class="section-title">Colori</div>
+<div class="grid">
+<div class="field">
+<label>Colore principale (bottoni, link, accenti)</label>
+<div class="color-row"><input type="color" id="primary_color_picker"><input type="text" id="primary_color"></div>
+</div>
+<div class="field">
+<label>Colore secondario (hover, varianti scure)</label>
+<div class="color-row"><input type="color" id="secondary_color_picker"><input type="text" id="secondary_color"></div>
+</div>
+<div class="field">
+<label>Colore testo</label>
+<div class="color-row"><input type="color" id="text_color_picker"><input type="text" id="text_color"></div>
+</div>
+<div class="field">
+<label>Colore sfondo pagina</label>
+<div class="color-row"><input type="color" id="page_bg_color_picker"><input type="text" id="page_bg_color"></div>
+</div>
+<div class="field">
+<label>Sfondo menu / header</label>
+<input type="text" id="menu_bg_color" placeholder="Es. rgba(244,236,223,.72) oppure #ffffff">
+</div>
+<div class="field">
+<label>Colore testo menu / header</label>
+<div class="color-row"><input type="color" id="menu_text_color_picker"><input type="text" id="menu_text_color"></div>
+</div>
+</div>
+</div>
+
+<div class="section">
+<div class="section-title">Font</div>
+<div class="field"><label>Famiglia font (nomi CSS standard, separati da virgola)</label><input type="text" id="font_family" placeholder='Es. "Avenir Next","Helvetica Neue",Arial,sans-serif'></div>
+<div class="field"><label>Font personalizzato — nome (opzionale)</label><input type="text" id="font_custom_name" placeholder="Es. MioFontAziendale"></div>
+<div class="field"><label>Font personalizzato — URL file .woff2 (opzionale)</label><input type="text" id="font_custom_url" placeholder="https://.../mio-font.woff2"></div>
+</div>
+
+<div class="section">
+<div class="section-title">Sfondo</div>
+<div class="field">
+<label>Modalità sfondo</label>
+<select id="background_mode">
+<option value="pattern">Motivo geometrico (personalizzabile)</option>
+<option value="solid">Tinta unita (solo colore sfondo pagina)</option>
+<option value="image">Immagine</option>
+<option value="none">Nessuno</option>
+</select>
+</div>
+<div class="field" id="patternColorField"><label>Colore motivo</label><input type="text" id="background_pattern_color" placeholder="Es. rgba(188,149,78,.23)"></div>
+<div class="field" id="patternOpacityField"><label>Opacità motivo (0–1)</label><input type="number" id="background_pattern_opacity" min="0" max="1" step="0.05"></div>
+<div class="field" id="imageUrlField"><label>URL immagine di sfondo</label><input type="text" id="background_image_url" placeholder="https://.../sfondo.jpg"></div>
+</div>
+
+<div class="section">
+<div class="section-title">Anteprima</div>
+<div class="preview">
+<div class="preview-header">BRAND</div>
+<span class="preview-btn">Bottone di esempio</span>
+<div class="preview-text">Testo di esempio con il font e i colori selezionati.</div>
+</div>
+</div>
+
+<button type="button" class="btn" id="saveThemeBtn">Salva aspetto</button>
+<div id="themeStatus" class="status"></div>
+</div>
+
+<!-- ============ PANNELLO: APP (icona PWA installabile) ============ -->
+<div class="panel" id="panel-app">
+<div class="section">
+<div class="section-title">Icona dell'app</div>
+<p style="font-size:12.5px;color:#8f7643;margin-bottom:18px">Quando un tuo cliente apre il sito da smartphone e sceglie "Aggiungi alla schermata Home", il sito si comporta come un'app: questa icona è quella che vedrà, al posto del logo generico di sistema.</p>
+<img id="appIconPreview" class="app-icon-preview" style="display:none">
+<div id="appIconPreviewEmpty" class="app-icon-empty">Nessuna icona caricata — verrà usata l'icona generica di sistema.</div>
+<div class="field"><label>Nome app (mostrato sotto l'icona)</label><input type="text" id="appName" placeholder="Es. Nome Agenzia"></div>
+<div class="field"><label>Carica icona (PNG quadrato, almeno 512×512px, sfondo pieno consigliato)</label><input type="file" id="appIconFile" accept="image/png"></div>
+<button type="button" class="btn" id="saveAppIconBtn">Salva icona app</button>
+<div id="appIconStatus" class="status"></div>
+</div>
 </div>
 
 <!-- ============ PANNELLO: CALENDARI ============ -->
@@ -482,6 +579,135 @@ document.getElementById("saveAnalyticsBtn").addEventListener("click", async func
   btn.disabled = false;
 });
 
+/* ================= ASPETTO: colori / font / sfondo ================= */
+function val(id){ return document.getElementById(id).value.trim(); }
+function linkColorInputs(colorId, textId){
+  var colorInput = document.getElementById(colorId);
+  var textInput = document.getElementById(textId);
+  colorInput.addEventListener("input", function(){ textInput.value = colorInput.value; updatePreviewVars(); });
+  textInput.addEventListener("input", function(){
+    if(/^#[0-9a-fA-F]{6}$/.test(textInput.value)) colorInput.value = textInput.value;
+    updatePreviewVars();
+  });
+}
+function updatePreviewVars(){
+  document.documentElement.style.setProperty("--primary-color", val("primary_color") || "#a67f34");
+  document.documentElement.style.setProperty("--secondary-color", val("secondary_color") || "#8a682c");
+  document.documentElement.style.setProperty("--text-color", val("text_color") || "#7f6430");
+  document.documentElement.style.setProperty("--page-bg-color", val("page_bg_color") || "#f4ecdf");
+  document.documentElement.style.setProperty("--menu-bg-color", val("menu_bg_color") || "rgba(244,236,223,.72)");
+  document.documentElement.style.setProperty("--menu-text-color", val("menu_text_color") || "#a67f34");
+  document.documentElement.style.setProperty("--font-family", val("font_family") || '"Avenir Next","Helvetica Neue",Arial,sans-serif');
+}
+function updateBackgroundFieldsVisibility(){
+  var mode = document.getElementById("background_mode").value;
+  document.getElementById("patternColorField").style.display = mode === "pattern" ? "" : "none";
+  document.getElementById("patternOpacityField").style.display = mode === "pattern" ? "" : "none";
+  document.getElementById("imageUrlField").style.display = mode === "image" ? "" : "none";
+}
+async function loadTheme(){
+  const { data, error } = await client.from("immonova_theme_settings").select("*").order("tenant_id",{ascending:false,nullsFirst:false}).limit(1).maybeSingle();
+  if(error || !data) return;
+  document.getElementById("primary_color").value = data.primary_color || "#a67f34";
+  document.getElementById("primary_color_picker").value = data.primary_color || "#a67f34";
+  document.getElementById("secondary_color").value = data.secondary_color || "#8a682c";
+  document.getElementById("secondary_color_picker").value = data.secondary_color || "#8a682c";
+  document.getElementById("text_color").value = data.text_color || "#7f6430";
+  document.getElementById("text_color_picker").value = data.text_color || "#7f6430";
+  document.getElementById("page_bg_color").value = data.page_bg_color || "#f4ecdf";
+  document.getElementById("page_bg_color_picker").value = data.page_bg_color || "#f4ecdf";
+  document.getElementById("menu_bg_color").value = data.menu_bg_color || "rgba(244,236,223,.72)";
+  document.getElementById("menu_text_color").value = data.menu_text_color || "#a67f34";
+  document.getElementById("menu_text_color_picker").value = /^#/.test(data.menu_text_color||"") ? data.menu_text_color : "#a67f34";
+  document.getElementById("font_family").value = data.font_family || '"Avenir Next","Helvetica Neue",Arial,sans-serif';
+  document.getElementById("font_custom_name").value = data.font_custom_name || "";
+  document.getElementById("font_custom_url").value = data.font_custom_url || "";
+  document.getElementById("background_mode").value = data.background_mode || "pattern";
+  document.getElementById("background_pattern_color").value = data.background_pattern_color || "rgba(188,149,78,.23)";
+  document.getElementById("background_pattern_opacity").value = data.background_pattern_opacity ?? 0.30;
+  document.getElementById("background_image_url").value = data.background_image_url || "";
+  updateBackgroundFieldsVisibility();
+  updatePreviewVars();
+}
+document.getElementById("saveThemeBtn").addEventListener("click", async function(){
+  var btn = this; btn.disabled = true;
+  showStatus("themeStatus", "Salvataggio in corso...", "");
+  const payload = {
+    primary_color: val("primary_color") || "#a67f34",
+    secondary_color: val("secondary_color") || "#8a682c",
+    text_color: val("text_color") || "#7f6430",
+    page_bg_color: val("page_bg_color") || "#f4ecdf",
+    menu_bg_color: val("menu_bg_color") || "rgba(244,236,223,.72)",
+    menu_text_color: val("menu_text_color") || "#a67f34",
+    font_family: val("font_family") || '"Avenir Next","Helvetica Neue",Arial,sans-serif',
+    font_custom_name: val("font_custom_name") || null,
+    font_custom_url: val("font_custom_url") || null,
+    background_mode: val("background_mode") || "pattern",
+    background_pattern_color: val("background_pattern_color") || "rgba(188,149,78,.23)",
+    background_pattern_opacity: Number(val("background_pattern_opacity")) || 0.30,
+    background_image_url: val("background_image_url") || null,
+    updated_at: new Date().toISOString(),
+    updated_by: currentUser.id
+  };
+  const { data, error } = await client.from("immonova_theme_settings").upsert(payload, { onConflict: "tenant_id" }).select();
+  btn.disabled = false;
+  if(error){ showStatus("themeStatus", "Errore: " + error.message, "error"); return; }
+  if(!data || !data.length){ showStatus("themeStatus", "Salvataggio bloccato dai permessi.", "error"); return; }
+  showStatus("themeStatus", "Aspetto salvato correttamente.", "success");
+  if(window.immonovaThemeLoader) window.immonovaThemeLoader.reload();
+});
+["primary_color","secondary_color","text_color","page_bg_color","menu_bg_color","menu_text_color","font_family"]
+  .forEach(function(id){ document.getElementById(id).addEventListener("input", updatePreviewVars); });
+linkColorInputs("primary_color_picker","primary_color");
+linkColorInputs("secondary_color_picker","secondary_color");
+linkColorInputs("text_color_picker","text_color");
+linkColorInputs("page_bg_color_picker","page_bg_color");
+linkColorInputs("menu_text_color_picker","menu_text_color");
+document.getElementById("background_mode").addEventListener("change", updateBackgroundFieldsVisibility);
+
+/* ================= APP: icona PWA ================= */
+async function loadAppIcon(){
+  var result = await client.from("immonova_site_settings").select("app_icon_url,app_name").order("tenant_id",{ascending:false,nullsFirst:false}).limit(1).maybeSingle();
+  if(result.data){
+    document.getElementById("appName").value = result.data.app_name || "";
+    if(result.data.app_icon_url){
+      var img = document.getElementById("appIconPreview");
+      img.src = result.data.app_icon_url;
+      img.style.display = "block";
+      document.getElementById("appIconPreviewEmpty").style.display = "none";
+    }
+  }
+}
+document.getElementById("saveAppIconBtn").addEventListener("click", async function(){
+  var btn = this; btn.disabled = true;
+  showStatus("appIconStatus", "Salvataggio...", "");
+  try{
+    var fileInput = document.getElementById("appIconFile");
+    var appName = document.getElementById("appName").value.trim();
+    var iconUrl = null;
+    if(fileInput.files && fileInput.files[0]){
+      var file = fileInput.files[0];
+      var path = "app-icon/" + Date.now() + "-" + file.name.replace(/[^a-zA-Z0-9.\-_]/g, "_");
+      var uploadResult = await client.storage.from("site-assets").upload(path, file, { upsert:true });
+      if(uploadResult.error) throw uploadResult.error;
+      iconUrl = client.storage.from("site-assets").getPublicUrl(path).data.publicUrl;
+    }
+    var updatePayload = { app_name: appName || null };
+    if(iconUrl) updatePayload.app_icon_url = iconUrl;
+    var updateResult = await client.from("immonova_site_settings").upsert(updatePayload, { onConflict: "tenant_id" }).select();
+    if(updateResult.error) throw updateResult.error;
+    if(!updateResult.data || !updateResult.data.length) throw new Error("Salvataggio bloccato dai permessi.");
+    if(iconUrl){
+      var img = document.getElementById("appIconPreview");
+      img.src = iconUrl; img.style.display = "block";
+      document.getElementById("appIconPreviewEmpty").style.display = "none";
+      fileInput.value = "";
+    }
+    showStatus("appIconStatus", "Salvato. I tuoi clienti la vedranno la prossima volta che installano il sito come app.", "success");
+  }catch(e){ showStatus("appIconStatus", "Errore: " + ((e && e.message) || e), "error"); }
+  btn.disabled = false;
+});
+
 /* ================= CALENDARI: connessioni personali ================= */
 var myConnections = { icloud:null, google:null };
 async function loadMyConnections(){
@@ -688,6 +914,8 @@ document.getElementById("logoutBtn").addEventListener("click", async function(){
   if(!ok) return;
   document.getElementById("mainContent").style.display = "grid";
   await loadSito();
+  await loadTheme();
+  await loadAppIcon();
   await loadMyConnections();
   handleGoogleConnectRedirect();
   await loadSocial();
