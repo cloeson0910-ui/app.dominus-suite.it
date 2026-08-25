@@ -150,6 +150,8 @@ body::after{
 .trial-banner.urgent .trial-bar-fill{background:#9c2f2f}
 .trial-buy-status{margin-top:8px;font-size:12px;min-height:16px}
 .trial-buy-status.error{color:#9c2f2f}
+.trial-plan-picker{display:flex;gap:8px;flex-wrap:wrap}
+.trial-plan-btn{font-size:10px;padding:11px 14px}
 .global-search{margin-bottom:28px}
 .search-input{
   width:100%;
@@ -515,7 +517,11 @@ body::after{
         <strong id="trialBannerTitle">Prova gratuita</strong>
         <span id="trialBannerDetail"></span>
       </div>
-      <button type="button" class="btn trial-buy-btn" id="buyNowBtn">Compra ora</button>
+      <div class="trial-plan-picker">
+        <button type="button" class="btn secondary trial-plan-btn" data-plan="starter" id="buyStarterBtn">Starter · 149€/mese</button>
+        <button type="button" class="btn trial-buy-btn trial-plan-btn" data-plan="team" id="buyTeamBtn">Team · 349€/mese</button>
+        <button type="button" class="btn secondary trial-plan-btn" data-plan="agency" id="buyAgencyBtn">Agency · 790€/mese</button>
+      </div>
     </div>
     <div class="trial-bar-track"><div class="trial-bar-fill" id="trialBarFill"></div></div>
     <div id="trialBuyStatus" class="trial-buy-status"></div>
@@ -976,28 +982,31 @@ function renderTrialBanner(licenseResult){
   }
 }
 
-document.getElementById("buyNowBtn").addEventListener("click", async function(){
-  var btn = this;
-  var statusEl = document.getElementById("trialBuyStatus");
-  btn.disabled = true;
-  statusEl.className = "trial-buy-status";
-  statusEl.textContent = "Preparazione pagamento...";
-  try{
-    var licenseCode = await getLicenseCodeForCheckout();
-    if(!licenseCode) throw new Error("Codice licenza non trovato");
-    var res = await fetch(CONTROL_PLANE_URL_CHECKOUT + "/functions/v1/client-checkout", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "apikey": CONTROL_PLANE_ANON_KEY_CHECKOUT },
-      body: JSON.stringify({ license_code: licenseCode, return_url: window.location.origin + window.location.pathname })
-    });
-    var result = await res.json();
-    if(!result.success || !result.checkout_url) throw new Error(result.error || "risposta inattesa dal pagamento");
-    window.location.href = result.checkout_url;
-  }catch(e){
-    statusEl.className = "trial-buy-status error";
-    statusEl.textContent = "Errore: " + ((e && e.message) || e);
-    btn.disabled = false;
-  }
+document.querySelectorAll(".trial-plan-btn").forEach(function(planBtn){
+  planBtn.addEventListener("click", async function(){
+    var btn = this;
+    var planKey = btn.dataset.plan;
+    var statusEl = document.getElementById("trialBuyStatus");
+    document.querySelectorAll(".trial-plan-btn").forEach(function(b){ b.disabled = true; });
+    statusEl.className = "trial-buy-status";
+    statusEl.textContent = "Preparazione pagamento...";
+    try{
+      var licenseCode = await getLicenseCodeForCheckout();
+      if(!licenseCode) throw new Error("Codice licenza non trovato");
+      var res = await fetch(CONTROL_PLANE_URL_CHECKOUT + "/functions/v1/client-checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "apikey": CONTROL_PLANE_ANON_KEY_CHECKOUT },
+        body: JSON.stringify({ license_code: licenseCode, plan_key: planKey, return_url: window.location.origin + window.location.pathname })
+      });
+      var result = await res.json();
+      if(!result.success || !result.checkout_url) throw new Error(result.error || "risposta inattesa dal pagamento");
+      window.location.href = result.checkout_url;
+    }catch(e){
+      statusEl.className = "trial-buy-status error";
+      statusEl.textContent = "Errore: " + ((e && e.message) || e);
+      document.querySelectorAll(".trial-plan-btn").forEach(function(b){ b.disabled = false; });
+    }
+  });
 });
 
 async function getLicenseCodeForCheckout(){
