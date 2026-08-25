@@ -44,8 +44,9 @@
 
       const licenseCode = await getLicenseCode(supabaseClient);
       if (!licenseCode) {
-        // Nessuna licenza mai attivata su questo sito -> vai alla pagina di attivazione.
-        window.location.href = "license-activation.html";
+        // Nessuna licenza mai attivata su questo sito -> vai alla pagina di attivazione
+        // (login + password + codice licenza insieme, non più la vecchia pagina).
+        window.location.href = "attiva-accesso.html";
         return { blocked: true, enabledPackages: [] };
       }
 
@@ -65,7 +66,15 @@
         return { blocked: true, enabledPackages: [] };
       }
 
-      const outcome = { blocked: false, enabledPackages: result.enabled_packages || [] };
+      const outcome = {
+        blocked: false,
+        enabledPackages: result.enabled_packages || [],
+        // Per la barra di urgenza / pulsante "Compra ora": passati alla
+        // dashboard così non deve rifare una chiamata a parte.
+        licenseCode: licenseCode,
+        isDemo: !!result.is_demo,
+        demoExpiresAt: result.demo_expires_at || null,
+      };
       sessionStorage.setItem("immonova_license_check", JSON.stringify(outcome));
       return outcome;
     },
