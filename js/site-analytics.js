@@ -57,7 +57,7 @@
   }
 
   whenClientReady(function(client){
-    client.from("immonova_site_settings").select("meta_pixel_id,ga_measurement_id").maybeSingle()
+    client.from("immonova_site_settings").select("meta_pixel_id,ga_measurement_id").order("tenant_id",{ascending:false,nullsFirst:false}).limit(1).maybeSingle()
       .then(function(result){
         var data = result && result.data;
         if(!data) return;

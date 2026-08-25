@@ -129,7 +129,7 @@
 
   whenClientReady(function(client){
     Promise.all([
-      client.from("immonova_site_settings").select("logo_url,company_name").maybeSingle(),
+      client.from("immonova_site_settings").select("logo_url,company_name").order("tenant_id",{ascending:false,nullsFirst:false}).limit(1).maybeSingle(),
       client.from("immonova_contact_emails").select("email,label,is_primary,sort_order").eq("active", true).order("sort_order"),
       client.from("immonova_contact_addresses").select("id,label,address,is_primary,sort_order").eq("active", true).order("sort_order"),
       client.from("immonova_contact_phones").select("id,address_id,phone,label,sort_order").eq("active", true).order("sort_order"),

@@ -77,7 +77,7 @@
 
   function loadTheme(){
     whenClientReady(function(client){
-      client.from("immonova_theme_settings").select("*").maybeSingle()
+      client.from("immonova_theme_settings").select("*").order("tenant_id",{ascending:false,nullsFirst:false}).limit(1).maybeSingle()
         .then(function(result){
           if(result.error){
             console.warn("Caricamento tema non riuscito (uso i valori di default):", result.error.message);
