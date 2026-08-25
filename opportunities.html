@@ -930,7 +930,7 @@ function detectInitialLanguage(){
 
 async function loadSocialLinks(){
   try{
-    var result = await client.from("site_settings").select("*").maybeSingle();
+    var result = await client.from("site_settings").select("*").order("tenant_id",{ascending:false,nullsFirst:false}).limit(1).maybeSingle();
     if(result.error || !result.data) return;
 
     var links = {
