@@ -120,6 +120,30 @@
     container.innerHTML = html;
   }
 
+  /* PWA: se il cliente ha caricato una propria icona/nome app in Impostazioni Sito,
+     genera al volo un manifest.json personalizzato e lo sostituisce a quello statico
+     di sistema — così "Aggiungi alla schermata Home" mostra il marchio del cliente,
+     non quello generico. Se non ha caricato nulla, il manifest statico resta invariato. */
+  function renderAppManifest(settings){
+    if(!settings || !settings.app_icon_url){ return; }
+    var link = document.querySelector('link[rel="manifest"]');
+    if(!link) return;
+    fetch(link.href).then(function(res){ return res.json(); }).then(function(base){
+      var manifest = Object.assign({}, base, {
+        name: settings.app_name || settings.company_name || base.name,
+        short_name: settings.app_name || settings.company_name || base.short_name,
+        icons: [
+          { src: settings.app_icon_url, sizes: "192x192", type: "image/png", purpose: "any" },
+          { src: settings.app_icon_url, sizes: "512x512", type: "image/png", purpose: "any" },
+          { src: settings.app_icon_url, sizes: "192x192", type: "image/png", purpose: "maskable" },
+          { src: settings.app_icon_url, sizes: "512x512", type: "image/png", purpose: "maskable" }
+        ]
+      });
+      var blob = new Blob([JSON.stringify(manifest)], { type: "application/json" });
+      link.setAttribute("href", URL.createObjectURL(blob));
+    }).catch(function(e){ console.error("site-branding: manifest app personalizzato non riuscito", e); });
+  }
+
   function applyContactHooks(data){
     document.querySelectorAll('[data-site-contact="emails"]').forEach(function(el){ renderEmails(el, data.emails); });
     document.querySelectorAll('[data-site-contact="phones"]').forEach(function(el){ renderPhones(el, data.phones); });
@@ -129,7 +153,7 @@
 
   whenClientReady(function(client){
     Promise.all([
-      client.from("immonova_site_settings").select("logo_url,company_name").order("tenant_id",{ascending:false,nullsFirst:false}).limit(1).maybeSingle(),
+      client.from("immonova_site_settings").select("logo_url,company_name,app_icon_url,app_name").order("tenant_id",{ascending:false,nullsFirst:false}).limit(1).maybeSingle(),
       client.from("immonova_contact_emails").select("email,label,is_primary,sort_order").eq("active", true).order("sort_order"),
       client.from("immonova_contact_addresses").select("id,label,address,is_primary,sort_order").eq("active", true).order("sort_order"),
       client.from("immonova_contact_phones").select("id,address_id,phone,label,sort_order").eq("active", true).order("sort_order"),
@@ -140,6 +164,7 @@
       var phones = (results[3] && results[3].data) || [];
 
       renderLogo(settings);
+      renderAppManifest(settings);
       applyContactHooks({ emails:emails, addresses:addresses, phones:phones });
 
       window.immonovaSiteBranding = { settings:settings, emails:emails, addresses:addresses, phones:phones };
