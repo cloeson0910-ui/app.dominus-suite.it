@@ -103,6 +103,54 @@ a.secondary-link{padding:13px 20px;border:1px solid rgba(166,127,52,.3);color:va
 </div>
 <div class="hint">Lo stato "Scaduto" viene calcolato automaticamente in base a data inizio + durata, se il rinnovo automatico non è attivo — non serve impostarlo a mano.</div>
 
+<div class="section-title">Prezzo e pagamento</div>
+<div class="row">
+<div class="field">
+<label>Prezzo di vendita richiesto (€)</label>
+<input type="number" id="agreedPrice" min="0" step="1" placeholder="Es. 350000">
+</div>
+<div class="field">
+<label>Giorni per il rogito (dall'accettazione proposta)</label>
+<input type="number" id="daysToDeed" min="0" placeholder="Es. 90">
+</div>
+</div>
+<div class="field">
+<label>Modalità di pagamento</label>
+<input type="text" id="paymentTerms" placeholder="Es. Assegni circolari, saldo al rogito...">
+</div>
+
+<div class="section-title">Visite e chiavi</div>
+<div class="row">
+<div class="field">
+<label>Giorni concordati per le visite</label>
+<input type="text" id="visitDays" placeholder="Es. Lun-Ven">
+</div>
+<div class="field">
+<label>Orari concordati per le visite</label>
+<input type="text" id="visitHours" placeholder="Es. 9:00-13:00 / 15:00-19:00">
+</div>
+</div>
+<label class="check-row"><input type="checkbox" id="keysDelivered"> <span>Il venditore ha consegnato le chiavi dell'immobile all'agente</span></label>
+
+<div class="section-title">Penale esclusiva</div>
+<div class="field">
+<label>Penale per violazione esclusiva (%)</label>
+<input type="number" id="penaltyPercent" min="0" max="100" step="0.1" placeholder="Es. 3">
+</div>
+<div class="hint">Percentuale calcolata sul prezzo di vendita richiesto, dovuta dal venditore in caso di violazione dell'esclusiva (art. 8 del modulo).</div>
+
+<div class="section-title">Mediatore</div>
+<div class="row">
+<div class="field">
+<label>Mediatore che ha raccolto l'incarico</label>
+<input type="text" id="brokerName" placeholder="Nome e cognome">
+</div>
+<div class="field">
+<label>REA del mediatore</label>
+<input type="text" id="brokerRea" placeholder="Es. MI-1234567">
+</div>
+</div>
+
 <div class="section-title">Opportunità collegate</div>
 <div class="field">
 <div class="opp-list" id="oppList"><div style="padding:8px;opacity:.6">Caricamento opportunità...</div></div>
@@ -201,6 +249,15 @@ async function loadExisting(){
   document.getElementById("autoRenew").checked = !!data.auto_renew;
   document.getElementById("status").value = data.status || "active";
   document.getElementById("notes").value = data.notes || "";
+  document.getElementById("agreedPrice").value = data.agreed_price ?? "";
+  document.getElementById("daysToDeed").value = data.days_to_deed ?? "";
+  document.getElementById("paymentTerms").value = data.payment_terms || "";
+  document.getElementById("visitDays").value = data.visit_days || "";
+  document.getElementById("visitHours").value = data.visit_hours || "";
+  document.getElementById("keysDelivered").checked = !!data.keys_delivered;
+  document.getElementById("penaltyPercent").value = data.penalty_percent ?? "";
+  document.getElementById("brokerName").value = data.broker_name || "";
+  document.getElementById("brokerRea").value = data.broker_rea || "";
 
   const { data: links } = await client.from("immonova_listing_mandate_opportunities").select("opportunity_id").eq("mandate_id", editingId);
   var linkedIds = new Set((links || []).map(r => String(r.opportunity_id)));
@@ -221,9 +278,24 @@ document.getElementById("saveBtn").addEventListener("click", async function(){
   var notes = document.getElementById("notes").value.trim() || null;
   var selectedOppIds = Array.from(document.querySelectorAll(".opp-check:checked")).map(cb => Number(cb.value));
 
+  var agreedPriceRaw = document.getElementById("agreedPrice").value;
+  var agreedPrice = agreedPriceRaw === "" ? null : Number(agreedPriceRaw);
+  var daysToDeedRaw = document.getElementById("daysToDeed").value;
+  var daysToDeed = daysToDeedRaw === "" ? null : Number(daysToDeedRaw);
+  var paymentTerms = document.getElementById("paymentTerms").value.trim() || null;
+  var visitDays = document.getElementById("visitDays").value.trim() || null;
+  var visitHours = document.getElementById("visitHours").value.trim() || null;
+  var keysDelivered = document.getElementById("keysDelivered").checked;
+  var penaltyPercentRaw = document.getElementById("penaltyPercent").value;
+  var penaltyPercent = penaltyPercentRaw === "" ? null : Number(penaltyPercentRaw);
+  var brokerName = document.getElementById("brokerName").value.trim() || null;
+  var brokerRea = document.getElementById("brokerRea").value.trim() || null;
+
   if(!clientId){ setFormStatus("Seleziona un cliente.", "error"); return; }
   if(!startDate){ setFormStatus("Inserisci la data di inizio.", "error"); return; }
   if(!durationMonths || durationMonths < 1){ setFormStatus("Inserisci una durata valida in mesi.", "error"); return; }
+  if(!agreedPrice || agreedPrice <= 0){ setFormStatus("Inserisci il prezzo di vendita richiesto.", "error"); return; }
+  if(!brokerName){ setFormStatus("Inserisci il nome del mediatore che ha raccolto l'incarico.", "error"); return; }
 
   setFormStatus("Salvataggio in corso...", "");
 
@@ -235,7 +307,16 @@ document.getElementById("saveBtn").addEventListener("click", async function(){
     commission_percent: commissionPercent,
     auto_renew: autoRenew,
     status: status,
-    notes: notes
+    notes: notes,
+    agreed_price: agreedPrice,
+    days_to_deed: daysToDeed,
+    payment_terms: paymentTerms,
+    visit_days: visitDays,
+    visit_hours: visitHours,
+    keys_delivered: keysDelivered,
+    penalty_percent: penaltyPercent,
+    broker_name: brokerName,
+    broker_rea: brokerRea
   };
 
   var mandateId = editingId;
@@ -271,10 +352,19 @@ document.getElementById("logoutBtn").addEventListener("click", async () => {
   window.location.href = "../index.html";
 });
 
+async function prefillBrokerName(){
+  if(editingId) return; // in modifica non si sovrascrive un valore già salvato
+  try{
+    const { data } = await client.from("profiles").select("full_name").eq("id", currentUser.id).maybeSingle();
+    if(data && data.full_name) document.getElementById("brokerName").value = data.full_name;
+  }catch(e){}
+}
+
 (async function init(){
   if(await checkAuth()){
     await loadSellerClients();
     await loadOpportunities();
+    await prefillBrokerName();
     await loadExisting();
   }
 })();

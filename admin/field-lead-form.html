@@ -125,11 +125,42 @@ a.secondary-link{padding:13px 20px;border:1px solid rgba(166,127,52,.3);color:va
 <div class="field">
 <label>Cliente collegato (opzionale)</label>
 <select id="linkedClientId"><option value="">Nessuno</option></select>
+<button type="button" class="secondary" id="newClientBtn" style="margin-top:8px">+ Nuovo cliente</button>
 </div>
 <div class="field">
 <label>Incarico collegato (opzionale)</label>
 <select id="linkedMandateId"><option value="">Nessuno</option></select>
 </div>
+</div>
+
+<div class="convert-box" id="newClientBox" style="display:none;margin-top:14px">
+<p>Crea al volo un nuovo contatto in Investitori/Clienti, senza uscire da questa notizia. Puoi completare il resto della scheda (residenza, C.F., ecc.) più avanti da Investitori.</p>
+<div class="row">
+<div class="field">
+<label>Nome</label>
+<input type="text" id="newClientFirstName" placeholder="Nome">
+</div>
+<div class="field">
+<label>Cognome</label>
+<input type="text" id="newClientLastName" placeholder="Cognome">
+</div>
+</div>
+<div class="row">
+<div class="field">
+<label>Telefono</label>
+<input type="text" id="newClientPhone" placeholder="Telefono">
+</div>
+<div class="field">
+<label>Email</label>
+<input type="email" id="newClientEmail" placeholder="Email">
+</div>
+</div>
+<label class="check-row" style="display:flex;align-items:center;gap:10px;padding:6px 0"><input type="checkbox" id="newClientIsSeller" style="width:auto" checked> <span style="font-size:12.5px">Segna come Venditore (per poterci fare un incarico)</span></label>
+<div class="actions-row" style="margin-top:10px">
+<button type="button" class="primary" id="createClientBtn">Crea e collega</button>
+<button type="button" class="secondary" id="cancelNewClientBtn">Annulla</button>
+</div>
+<div class="form-status" id="newClientStatus"></div>
 </div>
 </div>
 
@@ -192,6 +223,69 @@ async function loadMandates(){
     return '<option value="' + m.id + '">Incarico #' + m.id + ' (dal ' + escapeHTML(m.start_date || "") + ')</option>';
   }).join("");
 }
+
+document.getElementById("newClientBtn").addEventListener("click", function(){
+  var box = document.getElementById("newClientBox");
+  var opening = box.style.display === "none";
+  box.style.display = opening ? "block" : "none";
+  if(opening){
+    // Prova a precompilare da "Chi te l'ha riferita" / "Contatto della fonte", tanto per non
+    // ripartire da zero — restano comunque modificabili, spesso la fonte non è il cliente stesso.
+    var sourceName = document.getElementById("sourceName").value.trim();
+    if(sourceName && !document.getElementById("newClientFirstName").value){
+      var parts = sourceName.split(/\s+/);
+      document.getElementById("newClientFirstName").value = parts[0] || "";
+      document.getElementById("newClientLastName").value = parts.slice(1).join(" ") || "";
+    }
+    var sourceContact = document.getElementById("sourceContact").value.trim();
+    if(sourceContact && !document.getElementById("newClientPhone").value){
+      document.getElementById("newClientPhone").value = sourceContact;
+    }
+  }
+});
+
+document.getElementById("cancelNewClientBtn").addEventListener("click", function(){
+  document.getElementById("newClientBox").style.display = "none";
+  document.getElementById("newClientStatus").textContent = "";
+});
+
+document.getElementById("createClientBtn").addEventListener("click", async function(){
+  var statusEl = document.getElementById("newClientStatus");
+  var firstName = document.getElementById("newClientFirstName").value.trim();
+  var lastName = document.getElementById("newClientLastName").value.trim();
+  var phone = document.getElementById("newClientPhone").value.trim() || null;
+  var email = document.getElementById("newClientEmail").value.trim() || null;
+  var isSeller = document.getElementById("newClientIsSeller").checked;
+
+  if(!firstName && !lastName){
+    statusEl.className = "form-status error";
+    statusEl.textContent = "Inserisci almeno nome o cognome.";
+    return;
+  }
+
+  statusEl.className = "form-status";
+  statusEl.textContent = "Creazione contatto in corso...";
+
+  const { data, error } = await client.from("investors").insert({
+    first_name: firstName || null,
+    last_name: lastName || null,
+    phone: phone,
+    email: email,
+    is_seller: isSeller,
+    notes: "Creato automaticamente dalla Notizia" + (document.getElementById("title").value.trim() ? (": " + document.getElementById("title").value.trim()) : "")
+  }).select().single();
+
+  if(error){
+    statusEl.className = "form-status error";
+    statusEl.textContent = "Errore: " + error.message;
+    return;
+  }
+
+  await loadClients();
+  document.getElementById("linkedClientId").value = data.id;
+  document.getElementById("newClientBox").style.display = "none";
+  statusEl.textContent = "";
+});
 
 async function loadExisting(){
   if(!editingId) return;
