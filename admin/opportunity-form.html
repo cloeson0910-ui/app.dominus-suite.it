@@ -1141,6 +1141,14 @@ button.danger{
         </select>
       </div>
 
+      <div class="section-title" data-i18n="label_cadastral_section">Dati catastali</div>
+
+      <div class="field full">
+        <p style="font-size:12px;color:#9a8a63;margin-bottom:12px" data-i18n="hint_cadastral_units">Aggiungi un'unità per ogni subalterno o particella (es. abitazione, box, terreno) se la proprietà ne comprende più di una.</p>
+        <div id="cadastralUnitsContainer"></div>
+        <button type="button" class="soft" id="addCadastralUnitBtn" style="margin-top:8px" data-i18n="btn_add_cadastral_unit">+ Aggiungi unità catastale</button>
+      </div>
+
       <div class="field full">
         <label data-i18n="label_optional_features">Caratteristiche opzionali</label>
         <div class="checks" style="grid-column:1/-1;flex-wrap:wrap;gap:14px 22px">
@@ -2061,6 +2069,8 @@ document.addEventListener("DOMContentLoaded", bindGeoTools);
 document.addEventListener("DOMContentLoaded", function(){
   bindRoomInventoryEvents();
   addBuilding();
+  bindCadastralUnitsEvents();
+  addCadastralUnit();
 });
 
 
@@ -2325,6 +2335,120 @@ function getRoomInventoryPayload(){
       };
     })
     .filter(function(b){ return b.name || b.roomTypes.length; });
+}
+
+// ---------------------------------------------------------------------------
+// Unità catastali (sezione/foglio/particella/subalterno/categoria/classe/rendita)
+// Una proprietà può comprendere più unità (es. abitazione + box + terreno),
+// ognuna con dati catastali diversi: gestite come lista ripetibile, salvate
+// come array JSON nella colonna opportunities.cadastral_units.
+// ---------------------------------------------------------------------------
+var cadastralUnitsState = [];
+
+function addCadastralUnit(initial){
+  cadastralUnitsState.push({
+    id: genLocalId(),
+    sezione: (initial && initial.sezione) || "",
+    foglio: (initial && initial.foglio) || "",
+    particella: (initial && initial.particella) || "",
+    subalterno: (initial && initial.subalterno) || "",
+    categoria: (initial && initial.categoria) || "",
+    classe: (initial && initial.classe) || "",
+    rendita: (initial && (initial.rendita === 0 || initial.rendita)) ? initial.rendita : ""
+  });
+  renderCadastralUnits();
+}
+
+function removeCadastralUnit(unitId){
+  cadastralUnitsState = cadastralUnitsState.filter(function(u){ return u.id !== unitId; });
+  renderCadastralUnits();
+}
+
+function renderCadastralUnits(){
+  var container = document.getElementById("cadastralUnitsContainer");
+  if(!container) return;
+
+  container.innerHTML = cadastralUnitsState.map(function(u, idx){
+    return '' +
+      '<div class="cadastral-unit-row" data-unit="' + u.id + '" style="border:1px solid rgba(166,127,52,.15);padding:14px 16px;margin-bottom:10px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 14px">' +
+        '<div style="grid-column:1/-1;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:#8f7643">Unità ' + (idx + 1) + '</div>' +
+        '<input type="text" class="cad-sezione" data-unit="' + u.id + '" placeholder="Sezione" value="' + escapeHTML(u.sezione) + '">' +
+        '<input type="text" class="cad-foglio" data-unit="' + u.id + '" placeholder="Foglio" value="' + escapeHTML(u.foglio) + '">' +
+        '<input type="text" class="cad-particella" data-unit="' + u.id + '" placeholder="Particella (mappale)" value="' + escapeHTML(u.particella) + '">' +
+        '<input type="text" class="cad-subalterno" data-unit="' + u.id + '" placeholder="Subalterno" value="' + escapeHTML(u.subalterno) + '">' +
+        '<input type="text" class="cad-categoria" data-unit="' + u.id + '" placeholder="Categoria (es. A/2, C/6)" value="' + escapeHTML(u.categoria) + '">' +
+        '<input type="text" class="cad-classe" data-unit="' + u.id + '" placeholder="Classe" value="' + escapeHTML(u.classe) + '">' +
+        '<input type="number" step="0.01" class="cad-rendita" data-unit="' + u.id + '" placeholder="Rendita catastale (€)" value="' + escapeHTML(u.rendita === "" ? "" : String(u.rendita)) + '">' +
+        '<button type="button" class="danger remove-cadastral-unit-btn" data-unit="' + u.id + '" style="grid-column:1/-1;justify-self:start" data-i18n="btn_remove_cadastral_unit">Rimuovi</button>' +
+      '</div>';
+  }).join("") || '<p style="font-size:12px;color:#9a8a63">Nessuna unità catastale aggiunta.</p>';
+}
+
+function bindCadastralUnitsEvents(){
+  var container = document.getElementById("cadastralUnitsContainer");
+  var addBtn = document.getElementById("addCadastralUnitBtn");
+  if(!container || !addBtn) return;
+
+  addBtn.addEventListener("click", function(){
+    addCadastralUnit();
+  });
+
+  container.addEventListener("click", function(e){
+    var removeBtn = e.target.closest(".remove-cadastral-unit-btn");
+    if(removeBtn){ removeCadastralUnit(removeBtn.dataset.unit); return; }
+  });
+
+  container.addEventListener("input", function(e){
+    var target = e.target;
+    var unitId = target.dataset.unit;
+    if(!unitId) return;
+    var u = cadastralUnitsState.find(function(x){ return x.id === unitId; });
+    if(!u) return;
+
+    if(target.classList.contains("cad-sezione")) u.sezione = target.value;
+    else if(target.classList.contains("cad-foglio")) u.foglio = target.value;
+    else if(target.classList.contains("cad-particella")) u.particella = target.value;
+    else if(target.classList.contains("cad-subalterno")) u.subalterno = target.value;
+    else if(target.classList.contains("cad-categoria")) u.categoria = target.value;
+    else if(target.classList.contains("cad-classe")) u.classe = target.value;
+    else if(target.classList.contains("cad-rendita")) u.rendita = target.value === "" ? "" : Number(target.value);
+  });
+}
+
+function getCadastralUnitsPayload(){
+  return cadastralUnitsState
+    .map(function(u){
+      return {
+        sezione: (u.sezione || "").trim() || null,
+        foglio: (u.foglio || "").trim() || null,
+        particella: (u.particella || "").trim() || null,
+        subalterno: (u.subalterno || "").trim() || null,
+        categoria: (u.categoria || "").trim() || null,
+        classe: (u.classe || "").trim() || null,
+        rendita: (u.rendita === "" || u.rendita === null || u.rendita === undefined || isNaN(Number(u.rendita))) ? null : Number(u.rendita)
+      };
+    })
+    .filter(function(u){
+      return u.sezione || u.foglio || u.particella || u.subalterno || u.categoria || u.classe || u.rendita !== null;
+    });
+}
+
+function loadCadastralUnitsFromOpportunity(data){
+  cadastralUnitsState = [];
+  var units = Array.isArray(data && data.cadastral_units) ? data.cadastral_units : [];
+  units.forEach(function(u){
+    cadastralUnitsState.push({
+      id: genLocalId(),
+      sezione: u.sezione || "",
+      foglio: u.foglio || "",
+      particella: u.particella || "",
+      subalterno: u.subalterno || "",
+      categoria: u.categoria || "",
+      classe: u.classe || "",
+      rendita: (u.rendita === 0 || u.rendita) ? u.rendita : ""
+    });
+  });
+  renderCadastralUnits();
 }
 
 function normalizeGallery(value){
@@ -2742,6 +2866,17 @@ var UI_STRINGS = {
   label_internal_size:"Mq Interni", label_land_size:"Mq Terreno", label_construction_year:"Anno costruzione",
   label_energy_class:"Classe energetica", opt_select:"Seleziona", opt_not_available:"Non disponibile",
   label_property_condition:"Stato immobile",
+  label_cadastral_section:"Dati catastali",
+  label_cadastral_sezione:"Sezione",
+  label_cadastral_foglio:"Foglio",
+  label_cadastral_particella:"Particella (mappale)",
+  label_cadastral_subalterno:"Subalterno",
+  label_cadastral_categoria:"Categoria catastale",
+  label_cadastral_classe:"Classe",
+  label_cadastral_rendita:"Rendita catastale (€)",
+  hint_cadastral_units:"Aggiungi un'unità per ogni subalterno o particella (es. abitazione, box, terreno) se la proprietà ne comprende più di una.",
+  btn_add_cadastral_unit:"+ Aggiungi unità catastale",
+  btn_remove_cadastral_unit:"Rimuovi",
   cond_new:"Nuovo", cond_excellent:"Ottimo stato", cond_good:"Buono stato", cond_to_renovate:"Da ristrutturare",
   cond_under_construction:"In costruzione", cond_project:"Progetto da sviluppare",
   renovation_title:"Ristrutturazione e Render IA",
@@ -3147,6 +3282,7 @@ aiBtn.addEventListener("click", async function(){
       construction_year:numberOrNull("construction_year"),
       energy_class:textOrNull("energy_class"),
       property_condition:textOrNull("property_condition"),
+      cadastral_units:getCadastralUnitsPayload(),
       renovation_required:isRenovationRequired(),
       renovation_style:textOrNull("renovation_style"),
       renovation_level:textOrNull("renovation_level"),
@@ -3285,6 +3421,7 @@ form.addEventListener("submit", async function(e){
       construction_year:numberOrNull("construction_year"),
       energy_class:textOrNull("energy_class"),
       property_condition:textOrNull("property_condition"),
+      cadastral_units:getCadastralUnitsPayload(),
 
       renovation_required:isRenovationRequired(),
       renovation_level:isRenovationRequired() ? textOrNull("renovation_level") : null,
