@@ -518,13 +518,29 @@ body::after{
         <span id="trialBannerDetail"></span>
       </div>
       <div class="trial-plan-picker">
-        <button type="button" class="btn secondary trial-plan-btn" data-plan="starter" id="buyStarterBtn">Starter · 149€/mese</button>
-        <button type="button" class="btn trial-buy-btn trial-plan-btn" data-plan="team" id="buyTeamBtn">Team · 349€/mese</button>
-        <button type="button" class="btn secondary trial-plan-btn" data-plan="agency" id="buyAgencyBtn">Agency · 790€/mese</button>
+        <button type="button" class="btn secondary trial-plan-btn" data-plan="starter" id="buyStarterBtn">Starter · 199€/mese</button>
+        <button type="button" class="btn trial-buy-btn trial-plan-btn" data-plan="team" id="buyTeamBtn">Team · 399€/mese</button>
+        <button type="button" class="btn secondary trial-plan-btn" data-plan="agency" id="buyAgencyBtn">Agency · 899€/mese</button>
       </div>
     </div>
     <div class="trial-bar-track"><div class="trial-bar-fill" id="trialBarFill"></div></div>
     <div id="trialBuyStatus" class="trial-buy-status"></div>
+  </div>
+
+  <div id="dossierQuotaWidget" class="trial-banner" style="display:none">
+    <div class="trial-banner-top">
+      <div class="trial-banner-text">
+        <strong id="dossierQuotaTitle">Dossier questo mese</strong>
+        <span id="dossierQuotaDetail"></span>
+      </div>
+      <div class="trial-plan-picker" id="dossierQuotaBuyButtons" style="display:none">
+        <button type="button" class="btn secondary dossier-pack-btn" data-pack="pack_10">+10 dossier · 100€</button>
+        <button type="button" class="btn secondary dossier-pack-btn" data-pack="pack_50">+50 dossier · 500€</button>
+        <button type="button" class="btn secondary dossier-pack-btn" data-pack="pack_100">+100 dossier · 1.000€</button>
+      </div>
+    </div>
+    <div class="trial-bar-track"><div class="trial-bar-fill" id="dossierQuotaBarFill"></div></div>
+    <div id="dossierQuotaBuyStatus" class="trial-buy-status"></div>
   </div>
 
   <div id="bootStatus" class="boot-status"></div>
@@ -1018,6 +1034,69 @@ async function getLicenseCodeForCheckout(){
   return data || null;
 }
 
+/* ---- Quota dossier mensile + saldo pacchetti acquistati: mostrata solo ai
+   clienti paganti (non trial, non super admin). Chiama "dossier-quota-status"
+   sul pannello centrale con il token di sessione dell'utente loggato. ---- */
+async function loadDossierQuota(){
+  var widget = document.getElementById("dossierQuotaWidget");
+  if(!widget) return;
+  try{
+    var { data:{ session } } = await client.auth.getSession();
+    if(!session) return;
+    var res = await fetch(CONTROL_PLANE_URL_CHECKOUT + "/functions/v1/dossier-quota-status", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "apikey": CONTROL_PLANE_ANON_KEY_CHECKOUT, "Authorization": "Bearer " + session.access_token },
+    });
+    var result = await res.json();
+    if(!result || !result.success || result.unlimited || result.trial) return; // super admin o trial: niente widget
+
+    widget.style.display = "block";
+    var used = result.monthly_used || 0;
+    var limit = result.monthly_limit || 0;
+    var remaining = result.monthly_remaining || 0;
+    var credits = result.credits_balance || 0;
+    var pct = limit > 0 ? Math.min(100, (used / limit) * 100) : 0;
+    document.getElementById("dossierQuotaBarFill").style.width = pct + "%";
+
+    var detailParts = [used + " / " + limit + " dossier inclusi usati questo mese"];
+    if(credits > 0) detailParts.push(credits + " dossier da pacchetto disponibili");
+    document.getElementById("dossierQuotaDetail").textContent = detailParts.join(" · ");
+
+    if(remaining <= Math.max(1, Math.ceil(limit * 0.15)) || credits > 0 || remaining === 0){
+      document.getElementById("dossierQuotaBuyButtons").style.display = "flex";
+    }
+  }catch(e){
+    console.warn("Verifica quota dossier non riuscita (non bloccante):", e);
+  }
+}
+
+document.querySelectorAll(".dossier-pack-btn").forEach(function(packBtn){
+  packBtn.addEventListener("click", async function(){
+    var btn = this;
+    var packKey = btn.dataset.pack;
+    var statusEl = document.getElementById("dossierQuotaBuyStatus");
+    document.querySelectorAll(".dossier-pack-btn").forEach(function(b){ b.disabled = true; });
+    statusEl.className = "trial-buy-status";
+    statusEl.textContent = "Preparazione pagamento...";
+    try{
+      var licenseCode = await getLicenseCodeForCheckout();
+      if(!licenseCode) throw new Error("Codice licenza non trovato");
+      var res = await fetch(CONTROL_PLANE_URL_CHECKOUT + "/functions/v1/dossier-pack-checkout", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "apikey": CONTROL_PLANE_ANON_KEY_CHECKOUT },
+        body: JSON.stringify({ license_code: licenseCode, pack_key: packKey, return_url: window.location.origin + window.location.pathname })
+      });
+      var result = await res.json();
+      if(!result.success || !result.checkout_url) throw new Error(result.error || "risposta inattesa dal pagamento");
+      window.location.href = result.checkout_url;
+    }catch(e){
+      statusEl.className = "trial-buy-status error";
+      statusEl.textContent = "Errore: " + ((e && e.message) || e);
+      document.querySelectorAll(".dossier-pack-btn").forEach(function(b){ b.disabled = false; });
+    }
+  });
+});
+
 async function hideDisabledModuleLinks(licensedPackages){
   try{
     const { data, error } = await client.from("immonova_modules").select("key, package_key, enabled");
@@ -1034,7 +1113,7 @@ async function hideDisabledModuleLinks(licensedPackages){
   }
 }
 
-(async function init(){try{setBoot("Caricamento dati dashboard...","");if(await checkAuth()){await loadProfile();let licenseResult={blocked:false,enabledPackages:null};if(window.immonovaLicenseGate){licenseResult=await window.immonovaLicenseGate.check(client);}if(licenseResult.blocked){return;}renderTrialBanner(licenseResult);await hideDisabledModuleLinks(licenseResult.enabledPackages);await loadCollaborators();await loadReports();await loadOpportunities();renderAll(allOpportunities);await loadInvestors();renderAll(allOpportunities);await loadEvents();renderAll(allOpportunities);await loadContactHistory();renderAll(allOpportunities);await loadInvestorRequests();renderAll(allOpportunities);setBoot("","");}}catch(error){console.error(error);setBoot("Errore dashboard: "+(error.message||error),"error");}})();
+(async function init(){try{setBoot("Caricamento dati dashboard...","");if(await checkAuth()){await loadProfile();let licenseResult={blocked:false,enabledPackages:null};if(window.immonovaLicenseGate){licenseResult=await window.immonovaLicenseGate.check(client);}if(licenseResult.blocked){return;}renderTrialBanner(licenseResult);await loadDossierQuota();await hideDisabledModuleLinks(licenseResult.enabledPackages);await loadCollaborators();await loadReports();await loadOpportunities();renderAll(allOpportunities);await loadInvestors();renderAll(allOpportunities);await loadEvents();renderAll(allOpportunities);await loadContactHistory();renderAll(allOpportunities);await loadInvestorRequests();renderAll(allOpportunities);setBoot("","");}}catch(error){console.error(error);setBoot("Errore dashboard: "+(error.message||error),"error");}})();
 </script>
 </body>
 </html>
