@@ -85,6 +85,10 @@ Logo e contatti (email, indirizzi, telefoni) usati su tutte le pagine del sito. 
 <label>Carica nuovo logo (PNG o SVG con sfondo trasparente consigliato)</label>
 <input type="file" id="logoFile" accept="image/png,image/svg+xml,image/jpeg,image/webp">
 </div>
+<div class="field">
+<label>Slogan (comparirà sotto il logo nella pagina iniziale del sito)</label>
+<input type="text" id="siteSlogan" placeholder="Es. Off market consulting" maxlength="120">
+</div>
 <button type="button" class="btn" id="saveLogoBtn">Salva logo</button>
 <div id="logoStatus" class="status"></div>
 </div>
@@ -148,11 +152,12 @@ async function checkAuthAdmin(){
 }
 
 async function loadSettings(){
-  var settingsResult = await client.from("immonova_site_settings").select("logo_url,company_name,meta_pixel_id,ga_measurement_id").order("tenant_id",{ascending:false,nullsFirst:false}).limit(1).maybeSingle();
+  var settingsResult = await client.from("immonova_site_settings").select("logo_url,company_name,meta_pixel_id,ga_measurement_id,slogan").order("tenant_id",{ascending:false,nullsFirst:false}).limit(1).maybeSingle();
   if(settingsResult.data){
     document.getElementById("companyName").value = settingsResult.data.company_name || "";
     document.getElementById("metaPixelId").value = settingsResult.data.meta_pixel_id || "";
     document.getElementById("gaMeasurementId").value = settingsResult.data.ga_measurement_id || "";
+    document.getElementById("siteSlogan").value = settingsResult.data.slogan || "";
     if(settingsResult.data.logo_url){
       var img = document.getElementById("logoPreview");
       img.src = settingsResult.data.logo_url;
@@ -391,7 +396,8 @@ document.getElementById("saveLogoBtn").addEventListener("click", async function(
       logoUrl = publicUrlResult.data.publicUrl;
     }
 
-    var updatePayload = { company_name: companyName || "DOMINUS" };
+    var slogan = document.getElementById("siteSlogan").value.trim();
+    var updatePayload = { company_name: companyName || "DOMINUS", slogan: slogan || null };
     if(logoUrl) updatePayload.logo_url = logoUrl;
 
     var updateResult = await client.from("immonova_site_settings").upsert(updatePayload, { onConflict: "tenant_id" });
