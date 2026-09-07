@@ -46,7 +46,17 @@
   function renderLogo(settings){
     if(!settings || !settings.logo_url) return;
     document.querySelectorAll(".logo").forEach(function(el){
-      // Se dentro c'e' gia' un tag <img> (pagina gia' aggiornata a mano), non tocca nulla.
+      // Caso 1: l'elemento è GIÀ un tag <img> (es. l'hero animato di index.html,
+      // che ha bisogno delle sue dimensioni/animazioni CSS originali intatte) —
+      // si aggiorna solo src/alt, senza toccare stile o markup circostante.
+      if(el.tagName === "IMG"){
+        el.src = settings.logo_url;
+        el.alt = settings.company_name || el.alt || "DOMINUS";
+        return;
+      }
+      // Caso 2: l'elemento è un contenitore di testo (es. i loghi-testo "DOMINUS"
+      // nelle intestazioni admin) — se dentro c'è già un <img> (pagina aggiornata
+      // a mano in precedenza), non tocca nulla; altrimenti costruisce l'immagine.
       if(el.querySelector("img")) return;
       var img = document.createElement("img");
       img.src = settings.logo_url;
@@ -58,6 +68,19 @@
       img.style.display = "block";
       el.innerHTML = "";
       el.appendChild(img);
+    });
+  }
+
+  /* Slogan personalizzato: qualsiasi elemento con l'attributo data-site-slogan
+     viene riempito con il testo impostato in Impostazioni Sito. Se il cliente
+     non ha scritto nulla, l'elemento resta vuoto e nascosto (nessun blocco
+     animato vuoto in bella vista). */
+  function renderSlogan(settings){
+    var text = settings && settings.slogan ? String(settings.slogan).trim() : "";
+    document.querySelectorAll("[data-site-slogan]").forEach(function(el){
+      if(!text){ el.style.display = "none"; return; }
+      el.textContent = text;
+      el.style.display = "";
     });
   }
 
@@ -153,7 +176,7 @@
 
   whenClientReady(function(client){
     Promise.all([
-      client.from("immonova_site_settings").select("logo_url,company_name,app_icon_url,app_name").order("tenant_id",{ascending:false,nullsFirst:false}).limit(1).maybeSingle(),
+      client.from("immonova_site_settings").select("logo_url,company_name,app_icon_url,app_name,slogan").order("tenant_id",{ascending:false,nullsFirst:false}).limit(1).maybeSingle(),
       client.from("immonova_contact_emails").select("email,label,is_primary,sort_order").eq("active", true).order("sort_order"),
       client.from("immonova_contact_addresses").select("id,label,address,is_primary,sort_order").eq("active", true).order("sort_order"),
       client.from("immonova_contact_phones").select("id,address_id,phone,label,sort_order").eq("active", true).order("sort_order"),
@@ -164,6 +187,7 @@
       var phones = (results[3] && results[3].data) || [];
 
       renderLogo(settings);
+      renderSlogan(settings);
       renderAppManifest(settings);
       applyContactHooks({ emails:emails, addresses:addresses, phones:phones });
 
